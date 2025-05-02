@@ -35,7 +35,7 @@ class Tool(db.Model):
     name = db.Column(db.String(100), nullable=False)
     type = db.Column(db.String(50), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False) #default=datetime.now()
-    metrics = db.relationship('ToolMetrics', backref='tool', lazy=True)
+    metrics = db.relationship('ToolMetric', backref='tool', lazy=True)
 
 class MaintenanceLog(db.Model):
     __tablename__ = 'maintenance_logs'
@@ -293,3 +293,7 @@ if __name__ == '__main__':
 
     #response = client.post('/machines',json={"name": "CNC Router", "status": "Running"}) # this is the test data
     #print("Add response:", response.get_json())  # should print {"message": "Machine added successfully!"}
+    
+    
+with app.app_context():
+    db.create_all()
