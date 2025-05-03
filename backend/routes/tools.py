@@ -16,7 +16,7 @@ def get_tools():
             "id": tool.id,
             "name": tool.name,
             "type": tool.type,
-            "created_at": tool.created_at.isoformat(),
+            "created_at": tool.created_at.strftime('%Y-%m-%d'),
             "metrics": []
         }
 
@@ -29,7 +29,7 @@ def get_tools():
             })
 
         result.append(tool_data)
-
+    print("result: ",result)
     return jsonify({
         "tools": result,
         "total": tools_paginated.total,

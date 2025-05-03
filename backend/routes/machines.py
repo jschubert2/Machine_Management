@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import db, Machine, ToolAssignment
+from models import db, Machine, ToolAssignment, MachineMetric
 
 bp = Blueprint('machines', __name__)
 
@@ -10,17 +10,30 @@ def get_machines():
     per_page = request.args.get('per_page', 30, type=int)
 
     machines_paginated = Machine.query.paginate(page=page, per_page=per_page, error_out=False)
+    machines = machines_paginated.items
 
-    machine_list = [
-        {
+    # Get the latest metrics for each machine using DISTINCT ON (PostgreSQL-specific)
+    latest_metrics = (
+        db.session.query(MachineMetric)
+        .distinct(MachineMetric.machine_id)
+        .order_by(MachineMetric.machine_id, MachineMetric.id.desc())
+        .all()
+    )
+
+    # Map machine_id -> status
+    latest_status_map = {metric.machine_id: metric.status for metric in latest_metrics}
+
+    machine_list = []
+    for m in machines:
+        machine_list.append({
             "id": m.id,
             "name": m.name,
             "category": m.category,
             "group": m.group,
             "manufacturer": m.manufacturer,
-            "created_at": m.created_at.isoformat()
-        } for m in machines_paginated.items
-    ]
+            "created_at": m.created_at.strftime('%Y-%m-%d'),
+            "status": latest_status_map.get(m.id)  # May be None if no metrics exist yet
+        })
 
     return jsonify({
         "machines": machine_list,
@@ -73,11 +86,12 @@ def update_machine_tool(machine_id):
     assignment = ToolAssignment.query.get(machine_id)
 
     if assignment:
-        assignment.tool_id = new_tool_id
+        assignment.tool_id = new_tool_id  # update existing
     else:
-        assignment = ToolAssignment(machine_id=machine_id, tool_id=new_tool_id)
+        assignment = ToolAssignment(machine_id=machine_id, tool_id=new_tool_id)  # create new
         db.session.add(assignment)
 
     db.session.commit()
 
     return jsonify({"message": f"Tool assigned to machine {machine_id} updated successfully."})
+

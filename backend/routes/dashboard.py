@@ -9,7 +9,7 @@ def get_machine_metric(machine_id, param):
     if param not in allowed_params:
         return jsonify({"error": f"Invalid parameter '{param}'. Must be one of {list(allowed_params)}."}), 400
 
-    days = request.args.get('days', type=int)
+    days = request.args.get('days', type=int)  # e.g. ?days=30
 
     query = MachineMetric.query.filter_by(machine_id=machine_id).order_by(MachineMetric.timestamp.desc())
 
@@ -17,7 +17,9 @@ def get_machine_metric(machine_id, param):
         query = query.limit(days)
 
     metrics = query.all()
-    metrics.reverse()  # Oldest to newest
+
+    # Reverse to chronological order (oldest to newest)
+    metrics.reverse()
 
     result = [
         {

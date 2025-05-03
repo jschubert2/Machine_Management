@@ -29,6 +29,7 @@ def get_machine_maintenance(machine_id):
 def add_maintenance():
     data = request.get_json()
 
+    # Input validation (basic)
     required_fields = ['machine_id', 'performed_by', 'notes', 'date']
     for field in required_fields:
         if field not in data:
@@ -39,8 +40,8 @@ def add_maintenance():
             machine_id=data['machine_id'],
             performed_by=data['performed_by'],
             notes=data['notes'],
-            date=datetime.fromisoformat(data['date']),
-            planned=False
+            date=datetime.fromisoformat(data['date']),  # expects ISO 8601 date string
+            planned=False #the maintenance was performed, so it is not planned
         )
 
         db.session.add(maintenance)
