@@ -4,7 +4,7 @@ import random
 import calendar
 from datetime import date, timedelta
 
-# Crée le dossier csv si nécessaire
+# create a directory to store the CSV files
 os.makedirs('csv', exist_ok=True)
 
 # Configuration
@@ -14,12 +14,11 @@ MAINTENANCE_YEARS = [2021, 2022, 2023]
 DASHBOARD_YEAR = 2025
 DASHBOARD_MONTH = 3  # Mars
 
-# Fonction utilitaire pour générer une date aléatoire
 def random_date(start, end):
     delta = end - start
     return start + timedelta(days=random.randint(0, delta.days))
 
-# 1. Génération des machines
+# 1. generate machines
 machines = []
 start_date = date(2018, 1, 1)
 end_date = date(2023, 5, 3)
@@ -38,7 +37,7 @@ with open(os.path.join('csv', 'machines.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(machines)
 
-# 2. Génération des données de dashboard
+# 2. geneate data for dashboard
 dashboard = []
 dash_id = 1
 num_days = calendar.monthrange(DASHBOARD_YEAR, DASHBOARD_MONTH)[1]
@@ -61,7 +60,7 @@ with open(os.path.join('csv', 'dashboard.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(dashboard)
 
-# 3. Génération des outils
+# 3. generate tools
 tools = []
 tool_start = date(2018, 1, 1)
 tool_end = date(2023, 5, 3)
@@ -78,7 +77,7 @@ with open(os.path.join('csv', 'tools.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(tools)
 
-# 4. Génération des maintenances
+# 4. generate tool metrics
 maintenance = []
 maint_id = 1
 notes_choices = [
