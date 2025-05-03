@@ -1,2 +1,4 @@
 __pycache__/
 requirement.txt
+routes/__pycache__
+.gitignore

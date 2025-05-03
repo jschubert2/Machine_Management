@@ -1,0 +1,51 @@
+machine_id,name,category,group,manufacturer,created_at
+1,Machine_1,Manual,Assembly A,Manufacturer_5,2021-10-15
+2,Machine_2,Automatic,Painting,Manufacturer_3,2021-03-22
+3,Machine_3,Manual,CNC,Manufacturer_3,2020-02-23
+4,Machine_4,Automatic,Painting,Manufacturer_1,2019-01-18
+5,Machine_5,Automatic,Painting,Manufacturer_5,2020-10-27
+6,Machine_6,Manual,Press,Manufacturer_8,2019-02-25
+7,Machine_7,Manual,Assembly A,Manufacturer_5,2022-07-21
+8,Machine_8,Automatic,Welding Bay,Manufacturer_10,2018-06-28
+9,Machine_9,Manual,Press,Manufacturer_7,2022-09-06
+10,Machine_10,Automatic,Welding Bay,Manufacturer_5,2022-12-26
+11,Machine_11,Automatic,Welding Bay,Manufacturer_2,2020-08-15
+12,Machine_12,Automatic,Press,Manufacturer_8,2021-03-29
+13,Machine_13,Manual,Welding Bay,Manufacturer_3,2023-03-15
+14,Machine_14,Automatic,Welding Bay,Manufacturer_8,2021-11-23
+15,Machine_15,Manual,Assembly A,Manufacturer_3,2018-09-15
+16,Machine_16,Automatic,Painting,Manufacturer_5,2021-11-29
+17,Machine_17,Automatic,Press,Manufacturer_10,2022-03-21
+18,Machine_18,Manual,Press,Manufacturer_6,2019-04-02
+19,Machine_19,Manual,Assembly A,Manufacturer_1,2018-08-24
+20,Machine_20,Automatic,Welding Bay,Manufacturer_5,2020-05-16
+21,Machine_21,Manual,CNC,Manufacturer_8,2023-01-16
+22,Machine_22,Automatic,CNC,Manufacturer_9,2020-08-07
+23,Machine_23,Automatic,Welding Bay,Manufacturer_8,2020-10-19
+24,Machine_24,Manual,Press,Manufacturer_8,2021-08-03
+25,Machine_25,Manual,CNC,Manufacturer_5,2020-10-04
+26,Machine_26,Automatic,CNC,Manufacturer_2,2021-07-09
+27,Machine_27,Manual,Welding Bay,Manufacturer_9,2019-05-24
+28,Machine_28,Automatic,CNC,Manufacturer_9,2019-11-19
+29,Machine_29,Automatic,Welding Bay,Manufacturer_4,2019-06-06
+30,Machine_30,Automatic,Painting,Manufacturer_9,2021-03-09
+31,Machine_31,Manual,CNC,Manufacturer_1,2023-02-21
+32,Machine_32,Automatic,Assembly A,Manufacturer_5,2019-07-06
+33,Machine_33,Manual,Assembly A,Manufacturer_7,2021-07-24
+34,Machine_34,Automatic,Welding Bay,Manufacturer_5,2022-12-13
+35,Machine_35,Manual,CNC,Manufacturer_6,2020-11-22
+36,Machine_36,Manual,Welding Bay,Manufacturer_4,2018-02-26
+37,Machine_37,Automatic,Painting,Manufacturer_5,2019-07-12
+38,Machine_38,Manual,Assembly A,Manufacturer_5,2021-11-11
+39,Machine_39,Manual,CNC,Manufacturer_9,2022-02-22
+40,Machine_40,Manual,CNC,Manufacturer_3,2022-05-22
+41,Machine_41,Manual,Assembly A,Manufacturer_9,2018-03-10
+42,Machine_42,Manual,Welding Bay,Manufacturer_4,2019-10-01
+43,Machine_43,Automatic,Assembly A,Manufacturer_10,2021-10-21
+44,Machine_44,Manual,Assembly A,Manufacturer_4,2019-11-27
+45,Machine_45,Automatic,Press,Manufacturer_6,2022-12-26
+46,Machine_46,Manual,Assembly A,Manufacturer_10,2022-04-18
+47,Machine_47,Manual,Painting,Manufacturer_9,2019-03-25
+48,Machine_48,Automatic,Welding Bay,Manufacturer_1,2021-11-19
+49,Machine_49,Automatic,Assembly A,Manufacturer_10,2019-06-04
+50,Machine_50,Automatic,Assembly A,Manufacturer_1,2021-03-16
