@@ -22,7 +22,6 @@ def get_tools():
 
         for metric in tool.metrics:
             tool_data["metrics"].append({
-                "id": metric.id,
                 "status": metric.status,
                 "storage_location": metric.storage_location,
                 "wear_level": metric.wear_level

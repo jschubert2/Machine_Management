@@ -23,8 +23,8 @@ def get_machine_metric(machine_id, param):
 
     result = [
         {
-            "timestamp": m.timestamp.isoformat(),
-            param: getattr(m, param)
+            "timestamp": m.timestamp.strftime('%Y-%m-%d'),
+            "metric": getattr(m, param)
         } for m in metrics
     ]
 

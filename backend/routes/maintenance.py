@@ -13,7 +13,7 @@ def get_machine_maintenance(machine_id):
             "id": log.id,
             "machine_id": log.machine_id,
             "performed_by": log.performed_by,
-            "date": log.date.isoformat(),
+            "date": log.date.strftime('%Y-%m-%d'),
             "notes": log.notes,
             "planned": log.planned
         }
@@ -30,18 +30,20 @@ def add_maintenance():
     data = request.get_json()
 
     # Input validation (basic)
-    required_fields = ['machine_id', 'performed_by', 'notes', 'date']
+    required_fields = ['machine_id', 'performed_by', 'notes', 'date', 'planned']
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
     try:
+        planned = str(data['planned']).lower() == 'true'  # Convert to boolean
+
         maintenance = MaintenanceLog(
             machine_id=data['machine_id'],
             performed_by=data['performed_by'],
             notes=data['notes'],
-            date=datetime.fromisoformat(data['date']),  # expects ISO 8601 date string
-            planned=False #the maintenance was performed, so it is not planned
+            date=datetime.fromisoformat(data['date']),
+            planned=planned
         )
 
         db.session.add(maintenance)
