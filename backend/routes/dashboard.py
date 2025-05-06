@@ -24,7 +24,7 @@ def get_machine_metric(machine_id, param):
     result = [
         {
             "timestamp": m.timestamp.strftime('%Y-%m-%d'),
-            "metric": getattr(m, param)
+            "value": getattr(m, param)
         } for m in metrics
     ]
 
