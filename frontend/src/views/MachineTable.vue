@@ -1,7 +1,10 @@
 <template>
   <div class="machine-table-container">
-    <div class="machine-table">
-      <h2>Machine View</h2>
+    <h2>Machine Overview</h2>
+    <div class="button-group">
+      <button @click="$emit('import-data')" :disabled="isLoading">Import Data</button>
+    </div>
+    <div v-if="machines.length > 0">
       <table>
         <thead>
           <tr>
@@ -10,11 +13,11 @@
             <th>Category</th>
             <th>Status</th>
             <th>Manufacturer</th>
-            <th>Date of creation</th>
+            <th>Created At</th>
           </tr>
         </thead>
         <tbody>
-          <tr v-for="machine in paginatedMachines" :key="machine.id" @click="selectMachine(machine)">
+          <tr v-for="machine in paginatedMachines" :key="machine.id">
             <td>{{ machine.id }}</td>
             <td>{{ machine.name }}</td>
             <td>{{ machine.category }}</td>
@@ -25,151 +28,110 @@
         </tbody>
       </table>
       <div class="pagination">
-        <button :disabled="currentPage === 1" @click="currentPage--">Prev</button>
-        <span>{{ currentPage }}</span>
-        <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
-    <MachineDetails v-if="selectedMachine" :machine="selectedMachine" @close="selectedMachine = null" />
+    <div v-else class="no-data-message">
+      <p>No data available. Please click "Import Data" to load machines.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from 'axios';
-import MachineDetails from './MachineDetails.vue';
-
 export default {
-name: 'MachineTable',
-components: { MachineDetails },
-data() {
-  return {
-    machines: [],
-    currentPage: 1,
-    itemsPerPage: 10,
-    selectedMachine: null,
-    totalPages: 1
-  };
-},
-computed: {
-  paginatedMachines() {
-    return this.machines;
-  }
-},
-methods: {
-  async fetchMachines() {
-    try {
-      const response = await axios.get('http://localhost:5000/machines', {
-        params: {
-          page: this.currentPage,
-          per_page: this.itemsPerPage
-        }
-      });
-      this.machines = response.data.machines;
-      this.totalPages = response.data.pages;
-    } catch (error) {
-      console.error('Failed to fetch machines:', error);
-    }
+  name: 'MachineTable',
+  props: {
+    machines: {
+      type: Array,
+      default: () => [],
+    },
   },
-  getStatusClass(status) {
+  data() {
     return {
-      'status-green': status === 'Running',
-      'status-red': status === 'Offline',
+      currentPage: 1,
+      perPage: 30,
+      isLoading: false,
     };
   },
-  selectMachine(machine) {
-    this.selectedMachine = machine;
-  }
-},
-watch: {
-  currentPage() {
-    this.fetchMachines();
-  }
-},
-mounted() {
-  this.fetchMachines();
-}
+  computed: {
+    totalPages() {
+      return Math.ceil(this.machines.length / this.perPage);
+    },
+    paginatedMachines() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.machines.slice(start, end);
+    },
+  },
+  methods: {
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+    getStatusClass(status) {
+      return {
+        'status-green': status === 'Running',
+        'status-red': status === 'Offline',
+      };
+    },
+  },
 };
 </script>
 
 <style scoped>
 .machine-table-container {
-  display: flex;
-  position: relative;
-}
-
-.machine-table {
-  flex: 1;
   padding: 20px;
 }
-
-h2 {
-  color: #333;
+.button-group {
+  display: flex;
+  gap: 10px;
   margin-bottom: 20px;
-  font-size: 1.8em;
 }
-
 table {
   width: 100%;
   border-collapse: collapse;
-  background-color: #ffffff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
-
-th,
-td {
-  padding: 12px 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
 }
-
-th {
-  background-color: #f4f4f4;
-  color: #333;
-  font-weight: 600;
-}
-
-tr:hover {
-  background-color: #f9f9f9;
-  cursor: pointer;
-}
-
 .status-green {
-  color: #28a745;
-  font-weight: bold;
+  color: green;
 }
-
 .status-red {
-  color: #dc3545;
-  font-weight: bold;
+  color: red;
 }
-
-.pagination {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.pagination button {
-  padding: 8px 12px;
+button {
+  padding: 10px 20px;
   background-color: #007bff;
   color: white;
   border: none;
-  border-radius: 4px;
   cursor: pointer;
 }
-
-.pagination button:disabled {
+button:hover {
+  background-color: #0056b3;
+}
+button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
-
-.pagination button:hover:not(:disabled) {
-  background-color: #0056b3;
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
 }
-
 .pagination span {
-  font-size: 1.1em;
+  font-size: 1em;
   color: #333;
+}
+.no-data-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
 }
 </style>

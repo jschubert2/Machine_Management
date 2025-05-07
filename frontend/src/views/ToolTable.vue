@@ -1,6 +1,10 @@
 <template>
-    <div class="tool-table">
-      <h2>Overview of tools</h2>
+  <div class="tool-table-container">
+    <h2>Tool Overview</h2>
+    <div class="button-group">
+      <button @click="$emit('import-data')" :disabled="isLoading">Import Data</button>
+    </div>
+    <div v-if="tools.length > 0">
       <table>
         <thead>
           <tr>
@@ -8,8 +12,7 @@
             <th>Name</th>
             <th>Type</th>
             <th>Status</th>
-            <th>Wear Level</th>
-            <th>Date of creation</th>
+            <th>Created At</th>
           </tr>
         </thead>
         <tbody>
@@ -17,163 +20,104 @@
             <td>{{ tool.id }}</td>
             <td>{{ tool.name }}</td>
             <td>{{ tool.type }}</td>
-            <td :class="getStatusClass(tool.status)">{{ tool.status }}</td>
-            <td :class="getWearClass(tool.wearLevel)">{{ tool.wearLevel }}%</td>
-            <td>{{ tool.createdAt }}</td>
+            <td>{{ tool.metrics && tool.metrics[0] ? tool.metrics[0].status : 'N/A' }}</td>
+            <td>{{ tool.created_at }}</td>
           </tr>
         </tbody>
       </table>
       <div class="pagination">
-        <button :disabled="currentPage === 1" @click="currentPage--">Prev</button>
-        <span>{{ currentPage }}</span>
-        <button :disabled="currentPage === totalPages" @click="currentPage++">Next</button>
+        <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
-  </template>
-  
-  <script>
-  export default {
-    name: 'ToolTable',
-    data() {
-      return {
-        tools: [
-          { id: 183, name: 'Tool 1', type: 'Cutter', status: 'Storage', wearLevel: 0, createdAt: '04.04.2025' },
-          { id: 184, name: 'Tool 2', type: 'Nozzle', status: 'In Storage', wearLevel: 14, createdAt: '04.04.2025' },
-          { id: 185, name: 'Tool 3', type: 'Saw', status: 'Storage', wearLevel: 0, createdAt: '04.04.2025' },
-          { id: 186, name: 'Tool 4', type: 'Drill', status: 'Attached', wearLevel: 60, createdAt: '04.04.2025' },
-          { id: 187, name: 'Tool 5', type: 'Cutter', status: 'Attached', wearLevel: 30, createdAt: '04.04.2025' },
-          { id: 188, name: 'Tool 6', type: 'Nozzle', status: 'In Storage', wearLevel: 70, createdAt: '04.04.2025' },
-          { id: 189, name: 'Tool 7', type: 'Saw', status: 'Attached', wearLevel: 10, createdAt: '04.04.2025' },
-          { id: 190, name: 'Tool 8', type: 'Drill', status: 'Storage', wearLevel: 0, createdAt: '04.04.2025' },
-          { id: 191, name: 'Tool 9', type: 'Cutter', status: 'Attached', wearLevel: 5, createdAt: '04.04.2025' },
-          { id: 192, name: 'Tool 10', type: 'Nozzle', status: 'Storage', wearLevel: 0, createdAt: '04.04.2025' },
-          { id: 193, name: 'Tool 11', type: 'Saw', status: 'Attached', wearLevel: 82, createdAt: '04.04.2025' },
-          { id: 194, name: 'Tool 12', type: 'Drill', status: 'In Storage', wearLevel: 54, createdAt: '04.04.2025' },
-          { id: 195, name: 'Tool 13', type: 'Saw', status: 'Storage', wearLevel: 0, createdAt: '04.04.2025' },
-        ],
-        currentPage: 1,
-        itemsPerPage: 10,
-      };
+    <div v-else class="no-data-message">
+      <p>No data available. Please click "Import Data" to load tools.</p>
+    </div>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'ToolTable',
+  props: {
+    tools: {
+      type: Array,
+      default: () => [],
     },
-    computed: {
-      paginatedTools() {
-        const start = (this.currentPage - 1) * this.itemsPerPage;
-        const end = start + this.itemsPerPage;
-        return this.tools.slice(start, end);
-      },
-      totalPages() {
-        return Math.ceil(this.tools.length / this.itemsPerPage);
-      },
+  },
+  data() {
+    return {
+      currentPage: 1,
+      perPage: 30,
+      isLoading: false,
+    };
+  },
+  computed: {
+    totalPages() {
+      return Math.ceil(this.tools.length / this.perPage);
     },
-    methods: {
-      getStatusClass(status) {
-        return {
-          'status-green': status === 'Attached',
-          'status-yellow': status === 'In Storage',
-          'status-red': status === 'Storage',
-        };
-      },
-      getWearClass(wearLevel) {
-        if (wearLevel >= 70) return 'wear-red';
-        if (wearLevel >= 30) return 'wear-yellow';
-        return 'wear-green';
-      },
+    paginatedTools() {
+      const start = (this.currentPage - 1) * this.perPage;
+      const end = start + this.perPage;
+      return this.tools.slice(start, end);
     },
-  };
-  </script>
-  
-  <style scoped>
-  .tool-table {
-    padding: 20px;
-  }
-  
-  h2 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1.8em;
-  }
-  
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background-color: #ffffff;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  th,
-  td {
-    padding: 12px 15px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  th {
-    background-color: #f4f4f4;
-    color: #333;
-    font-weight: 600;
-  }
-  
-  tr:hover {
-    background-color: #f9f9f9;
-  }
-  
-  .status-green {
-    color: #28a745;
-    font-weight: bold;
-  }
-  
-  .status-yellow {
-    color: #ffc107;
-    font-weight: bold;
-  }
-  
-  .status-red {
-    color: #dc3545;
-    font-weight: bold;
-  }
-  
-  .wear-green {
-    color: #28a745;
-    font-weight: bold;
-  }
-  
-  .wear-yellow {
-    color: #ffc107;
-    font-weight: bold;
-  }
-  
-  .wear-red {
-    color: #dc3545;
-    font-weight: bold;
-  }
-  
-  .pagination {
-    margin-top: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .pagination button {
-    padding: 8px 12px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  
-  .pagination button:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-  }
-  
-  .pagination button:hover:not(:disabled) {
-    background-color: #0056b3;
-  }
-  
-  .pagination span {
-    font-size: 1.1em;
-    color: #333;
-  }
-  </style>
+  },
+  methods: {
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+  },
+};
+</script>
+
+<style scoped>
+.tool-table-container {
+  padding: 20px;
+}
+.button-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+th, td {
+  padding: 10px;
+  border: 1px solid #ddd;
+}
+button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #0056b3;
+}
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
+  justify-content: center;
+}
+.pagination span {
+  font-size: 1em;
+  color: #333;
+}
+.no-data-message {
+  text-align: center;
+  padding: 20px;
+  color: #666;
+}
+</style>
