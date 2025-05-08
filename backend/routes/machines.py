@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from datetime import datetime
-from models import db, Machine, ToolAssignment, MachineMetric
+from models import db, Machine, ToolAssignment, MachineMetric, Tool, ToolMetric
 
 bp = Blueprint('machines', __name__)
 
@@ -95,3 +95,17 @@ def update_machine_tool(machine_id):
 
     return jsonify({"message": f"Tool assigned to machine {machine_id} updated successfully."})
 
+@bp.route('/machines/<int:machine_id>/tool', methods=['GET'])
+def get_machine_tool(machine_id):
+    assignment = ToolAssignment.query.filter_by(machine_id=machine_id).first()
+    
+    if assignment is None:
+        return jsonify({"tool_name": None, "wear_level": None}), 200
+
+    tool = Tool.query.get(assignment.tool_id)
+    metric = ToolMetric.query.filter_by(tool_id=tool.id).first()
+
+    return jsonify({
+        "tool_name": tool.name if tool else None,
+        "wear_level": metric.wear_level if metric else None
+    }), 200
