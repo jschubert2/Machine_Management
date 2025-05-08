@@ -42,19 +42,22 @@ with open(os.path.join('csv', 'machines.csv'), 'w', newline='') as f:
 tools = []
 tool_start = date(2018, 1, 1)
 tool_end = date(2023, 5, 3)
+statuses = ["in storage", "scrapped", "attached"]
+storage_locations = ["Shelf A1", "Rack B2", "Shelf C3", "Rack D4", "Cabinet E5"]
+
 for tid in range(1, NUM_TOOLS + 1):
-    status = random.choice(["storage", "in storage", "attached"])
-    include_storage = status in ["storage", "in storage"]
-    tools.append({
+    status = random.choice(statuses)
+    tool = {
         "id": tid,
         "name": f"Tool_{tid}",
         "type": random.choice(["Cutting", "Drilling", "Grinding", "Milling"]),
         "created_at": random_date(tool_start, tool_end).isoformat(),
         "status": status,
-        "storage_location": random.choice(["Shelf A1", "Shelf B2", "Rack C3"]) if include_storage else "",
-        "wear_level": random.randint(0, 100) if include_storage else ""
-    })
-
+        "wear_level": random.randint(0, 100),
+        "storage_location": random.choice(storage_locations) if status == "in storage" else ""
+    }
+    tools.append(tool)
+    
 with open(os.path.join('csv', 'tools.csv'), 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=tools[0].keys())
     writer.writeheader()
