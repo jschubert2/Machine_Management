@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 id,name,type,created_at,status,wear_level,storage_location
 1,Tool_1,Grinding,2020-01-23,attached,47,
 2,Tool_2,Cutting,2018-03-17,attached,9,
@@ -29,3 +30,36 @@ id,name,type,created_at,status,wear_level,storage_location
 28,Tool_28,Cutting,2022-08-11,attached,34,
 29,Tool_29,Grinding,2022-11-24,in storage,28,Shelf C3
 30,Tool_30,Milling,2018-04-04,in storage,27,Cabinet E5
+=======
+id,name,type,created_at
+1,Tool_1,Drilling,2018-03-26
+2,Tool_2,Cutting,2018-06-09
+3,Tool_3,Grinding,2023-03-11
+4,Tool_4,Grinding,2019-11-21
+5,Tool_5,Grinding,2022-10-03
+6,Tool_6,Drilling,2022-06-03
+7,Tool_7,Milling,2019-12-10
+8,Tool_8,Grinding,2021-09-27
+9,Tool_9,Milling,2021-03-28
+10,Tool_10,Milling,2023-02-16
+11,Tool_11,Grinding,2019-02-22
+12,Tool_12,Milling,2022-02-28
+13,Tool_13,Cutting,2021-08-06
+14,Tool_14,Milling,2021-11-09
+15,Tool_15,Milling,2022-08-28
+16,Tool_16,Grinding,2018-07-10
+17,Tool_17,Drilling,2019-08-11
+18,Tool_18,Milling,2022-02-24
+19,Tool_19,Grinding,2022-09-08
+20,Tool_20,Milling,2018-10-24
+21,Tool_21,Cutting,2022-08-25
+22,Tool_22,Drilling,2023-04-24
+23,Tool_23,Drilling,2021-01-18
+24,Tool_24,Drilling,2020-08-24
+25,Tool_25,Cutting,2019-03-16
+26,Tool_26,Grinding,2018-11-05
+27,Tool_27,Milling,2022-09-15
+28,Tool_28,Cutting,2020-03-07
+29,Tool_29,Milling,2022-02-16
+30,Tool_30,Grinding,2023-03-23
+>>>>>>> 987dea3 (added scritps to fill the DB from CSV + changed the CSV generation script(EXECUTE GenerateData.py then seedDBfromCSV.py))

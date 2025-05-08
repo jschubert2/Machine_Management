@@ -1,0 +1,6 @@
+id,username,password_hash,role,created_at
+1,user1,hashedpassword,technician,2025-05-08T16:45:44.732749
+2,user2,hashedpassword,technician,2025-05-08T16:45:44.732764
+3,user3,hashedpassword,technician,2025-05-08T16:45:44.732767
+4,user4,hashedpassword,technician,2025-05-08T16:45:44.732769
+5,user5,hashedpassword,technician,2025-05-08T16:45:44.732771
