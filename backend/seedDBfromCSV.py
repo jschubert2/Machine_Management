@@ -1,24 +1,22 @@
 import os
 import csv
 import random
-import calendar
 from datetime import datetime, timedelta, date
 
-# Crée le dossier csv si nécessaire
 os.makedirs('csv', exist_ok=True)
 
-# Configuration
 NUM_MACHINES = 50
 NUM_TOOLS = 30
-DASHBOARD_MONTHS = 3
 MAINTENANCE_YEARS = [2021, 2022, 2023]
+METRIC_MONTHS = [2, 3, 4]  # Février, Mars, Avril
+CURRENT_YEAR = datetime.now().year
 
-# Fonction utilitaire pour générer une date aléatoire
+
 def random_date(start, end):
     delta = end - start
     return start + timedelta(days=random.randint(0, delta.days))
 
-# 1. Génération des machines
+# 1. Machines
 machines = []
 start_date = date(2018, 1, 1)
 end_date = date(2023, 5, 3)
@@ -38,7 +36,7 @@ with open(os.path.join('csv', 'machines.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(machines)
 
-# 2. Génération des outils
+# 2. Tools
 tools = []
 tool_start = date(2018, 1, 1)
 tool_end = date(2023, 5, 3)
@@ -60,34 +58,31 @@ with open(os.path.join('csv', 'tools.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(tools)
 
-# 3. Génération des données de dashboard (3 mois récents)
+# 3. Dashboard metrics 
 dashboard = []
 dash_id = 1
-end_day = datetime.now().date()
-start_day = end_day - timedelta(days=30 * DASHBOARD_MONTHS)
-current_day = start_day
-
-while current_day <= end_day:
-    for m in machines:
-        dashboard.append({
-            "id": dash_id,
-            "machine_id": m["machine_id"],
-            "date": current_day.isoformat(),
-            "oee": round(random.uniform(50, 100), 2),
-            "availability": round(random.uniform(50, 100), 2),
-            "performance": round(random.uniform(50, 100), 2),
-            "output_quality": round(random.uniform(50, 100), 2),
-            "status": random.choice(["Running", "Offline"])
-        })
-        dash_id += 1
-    current_day += timedelta(days=1)
+for month in METRIC_MONTHS:
+    num_days = (date(CURRENT_YEAR, month % 12 + 1, 1) - timedelta(days=1)).day
+    for day in range(1, num_days + 1):
+        for m in machines:
+            dashboard.append({
+                "id": dash_id,
+                "machine_id": m["machine_id"],
+                "date": date(CURRENT_YEAR, month, day).isoformat(),
+                "oee": round(random.uniform(50, 100), 2),
+                "availability": round(random.uniform(50, 100), 2),
+                "performance": round(random.uniform(50, 100), 2),
+                "output_quality": round(random.uniform(50, 100), 2),
+                "status": random.choice(["Running", "Offline"])
+            })
+            dash_id += 1
 
 with open(os.path.join('csv', 'dashboard.csv'), 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=dashboard[0].keys())
     writer.writeheader()
     writer.writerows(dashboard)
 
-# 4. Génération des maintenances
+# 4. Maintenance logs
 maintenance = []
 maint_id = 1
 notes_choices = [
@@ -114,4 +109,4 @@ with open(os.path.join('csv', 'maintenance.csv'), 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(maintenance)
 
-print("✅ CSV files regenerated with updated tool statuses and fields.")
+print("✅ CSV files regenerated with machine, tool, dashboard and maintenance data.")

@@ -1,31 +1,31 @@
-id,name,type,created_at
-1,Tool_1,Drilling,2021-11-26
-2,Tool_2,Drilling,2018-09-10
-3,Tool_3,Drilling,2019-05-04
-4,Tool_4,Grinding,2022-11-19
-5,Tool_5,Grinding,2019-03-03
-6,Tool_6,Cutting,2019-08-30
-7,Tool_7,Drilling,2022-12-06
-8,Tool_8,Grinding,2022-10-22
-9,Tool_9,Milling,2018-09-29
-10,Tool_10,Grinding,2019-06-20
-11,Tool_11,Grinding,2020-09-10
-12,Tool_12,Milling,2018-01-24
-13,Tool_13,Drilling,2022-01-18
-14,Tool_14,Cutting,2018-01-24
-15,Tool_15,Milling,2018-09-06
-16,Tool_16,Grinding,2020-11-18
-17,Tool_17,Drilling,2023-02-21
-18,Tool_18,Cutting,2019-11-02
-19,Tool_19,Drilling,2018-06-07
-20,Tool_20,Drilling,2018-01-05
-21,Tool_21,Milling,2020-11-06
-22,Tool_22,Drilling,2019-10-03
-23,Tool_23,Grinding,2018-09-08
-24,Tool_24,Grinding,2019-07-17
-25,Tool_25,Grinding,2022-05-28
-26,Tool_26,Grinding,2018-12-26
-27,Tool_27,Milling,2022-02-13
-28,Tool_28,Cutting,2019-04-15
-29,Tool_29,Cutting,2021-05-03
-30,Tool_30,Drilling,2021-05-17
+id,name,type,created_at,status,storage_location,wear_level
+1,Tool_1,Cutting,2020-08-22,in storage,Shelf A1,69
+2,Tool_2,Milling,2023-01-16,in storage,Shelf B2,52
+3,Tool_3,Drilling,2021-05-13,attached,,
+4,Tool_4,Cutting,2022-04-28,in storage,Shelf B2,50
+5,Tool_5,Milling,2018-04-20,storage,Shelf A1,97
+6,Tool_6,Milling,2018-08-17,storage,Shelf B2,86
+7,Tool_7,Drilling,2022-10-16,storage,Shelf B2,82
+8,Tool_8,Drilling,2022-01-05,storage,Shelf A1,74
+9,Tool_9,Drilling,2020-12-22,in storage,Rack C3,6
+10,Tool_10,Drilling,2021-02-10,storage,Shelf A1,45
+11,Tool_11,Milling,2018-03-04,attached,,
+12,Tool_12,Drilling,2021-04-13,in storage,Rack C3,59
+13,Tool_13,Drilling,2020-03-25,storage,Shelf B2,30
+14,Tool_14,Cutting,2018-05-19,attached,,
+15,Tool_15,Milling,2021-12-21,attached,,
+16,Tool_16,Cutting,2019-09-22,attached,,
+17,Tool_17,Milling,2020-07-25,in storage,Shelf B2,35
+18,Tool_18,Milling,2021-07-28,storage,Rack C3,35
+19,Tool_19,Drilling,2021-12-13,attached,,
+20,Tool_20,Cutting,2020-01-26,attached,,
+21,Tool_21,Milling,2018-12-19,storage,Rack C3,31
+22,Tool_22,Drilling,2020-03-12,in storage,Rack C3,5
+23,Tool_23,Milling,2021-07-13,storage,Rack C3,35
+24,Tool_24,Cutting,2022-09-29,attached,,
+25,Tool_25,Cutting,2019-03-16,in storage,Rack C3,47
+26,Tool_26,Cutting,2023-02-25,storage,Shelf B2,84
+27,Tool_27,Grinding,2022-10-09,in storage,Shelf A1,98
+28,Tool_28,Grinding,2020-06-26,in storage,Shelf B2,61
+29,Tool_29,Milling,2021-03-20,in storage,Shelf A1,96
+30,Tool_30,Cutting,2018-11-29,attached,,
