@@ -1,7 +1,7 @@
 import os
 import csv
 from flask import Blueprint, jsonify
-from models import db, Machine, Tool, MaintenanceLog, MachineMetric
+from models import db, Machine, Tool, MaintenanceLog, MachineMetric, ToolMetric
 from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -51,6 +51,15 @@ def import_csv():
                     created_at=parse_date(row['created_at'])
                 )
                 db.session.add(tool)
+                db.session.flush()  # Get the generated tool.id before commit
+
+                metric = ToolMetric(
+                    tool_id=tool.id,
+                    status=row['status'],
+                    wear_level=int(row['wear_level']),
+                    storage_location=row['storage_location'] if row['status'] == 'in storage' else "N/A"
+                )
+                db.session.add(metric)
         #print("tools done")
         # Load maintenance.csv
         with open(os.path.join(CSV_DIR, 'maintenance.csv')) as f:
