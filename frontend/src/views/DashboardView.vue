@@ -2,203 +2,282 @@
   <div class="dashboard">
     <h2>Dashboard</h2>
 
+
     <div class="controls">
-      <select v-model="selectedMachine" @change="fetchMetrics">
+      <select v-model="selectedMachineId">
         <option disabled value="">Select a machine</option>
-        <option v-for="machine in machines" :key="machine.id" :value="machine.name">
-          {{ machine.name }}
-        </option>
+        <option v-for="m in machines" :key="m.id" :value="m.id">{{ m.name }}</option>
       </select>
 
-      <select v-model="timeRange" @change="fetchMetrics">
-        <option :value="7">Last 7 days</option>
-        <option :value="30">Last 30 days</option>
-        <option :value="365">Last year</option>
+      <select v-model.number="timeRange">
+        <option v-for="d in ranges" :key="d" :value="d">Last {{ labelOf(d) }}</option>
       </select>
 
-      <button @click="importCsv" :disabled="loading">Import CSV</button>
+      <button @click="importCsv" :disabled="loading">
+        <span v-if="loading">Importing…</span>
+        <span v-else>Import CSV</span>
+      </button>
     </div>
+
 
     <div class="metrics">
-      <div class="metric">
-        <h3>OEE</h3>
-        <p>{{ average.oee }}%</p>
-      </div>
-      <div class="metric">
-        <h3>Availability</h3>
-        <p>{{ average.availability }}%</p>
-      </div>
-      <div class="metric">
-        <h3>Performance</h3>
-        <p>{{ average.performance }}%</p>
-      </div>
-      <div class="metric">
-        <h3>Quality</h3>
-        <p>{{ average.quality }}%</p>
-      </div>
+      <MetricCard v-for="card in cards" :key="card.label" :label="card.label" :value="card.value" />
     </div>
 
-    <canvas ref="chartCanvas" width="800" height="300"></canvas>
+
+    <div class="metric-toggle">
+      <label v-for="t in metricTypes" :key="t">
+        <input type="checkbox" :value="t" v-model="visibleMetrics" />
+        {{ pretty(t) }}
+      </label>
+    </div>
+
+
+    <div class="chart-wrapper">
+      <canvas ref="chartCanvas"></canvas>
+    </div>
   </div>
 </template>
 
-<script>
+<script lang="ts" setup>
+import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } from 'vue';
 import axios from 'axios';
 import Chart from 'chart.js/auto';
+import 'chartjs-adapter-date-fns';
 
-export default {
-  name: 'DashboardView',
-  data() {
-    return {
-      machines: [],
-      selectedMachine: '',
-      timeRange: 7,
-      average: {
-        oee: 0,
-        availability: 0,
-        performance: 0,
-        quality: 0
+const metricTypes = ['oee', 'availability', 'performance', 'output_quality'] as const;
+const colorMap: Record<typeof metricTypes[number], string> = {
+  oee: '#007bff',
+  availability: '#28a745',
+  performance: '#ffc107',
+  output_quality: '#dc3545'
+};
+
+const ranges = [7, 30, 365] as const;
+
+const machines = ref<{ id: string; name: string }[]>([]);
+const selectedMachineId = ref<string>('');
+const timeRange = ref<number>(7);
+const visibleMetrics = ref<string[]>([...metricTypes]);
+const loading = ref<boolean>(false);
+
+let latestRaw: Record<string, any[]> | null = null;
+
+const kpi = reactive<Record<string, number>>({
+  oee: 0,
+  availability: 0,
+  performance: 0,
+  output_quality: 0
+});
+
+const api = axios.create({
+  baseURL: 'http://localhost:5000',
+  timeout: 8000
+});
+
+const pretty = (t: string) => t.replace('_', ' ').toUpperCase();
+const labelOf = (d: number) => (d === 365 ? 'year' : `${d} days`);
+
+function avg(arr: number[]): number {
+  return arr.length ? +(arr.reduce((a, b) => a + b) / arr.length).toFixed(2) : 0;
+}
+
+const MetricCard = {
+  props: { label: String, value: [String, Number] },
+  template: `<div class="metric"><h3>{{ label }}</h3><p>{{ value }}%</p></div>`
+};
+
+const cards = computed(() => [
+  { label: 'OEE', value: kpi.oee },
+  { label: 'Availability', value: kpi.availability },
+  { label: 'Performance', value: kpi.performance },
+  { label: 'Quality', value: kpi.output_quality }
+]);
+
+const chartCanvas = ref<HTMLCanvasElement | null>(null);
+let chart: Chart | null = null;
+
+function buildOrUpdateChart(dataset: ChartDataset[]) {
+  const ctx = chartCanvas.value?.getContext('2d');
+  if (!ctx) return;
+
+  const allValues = dataset.flatMap(d => d.data as number[]);
+  const yMin = Math.max(0, Math.min(...allValues) - 5);
+  const yMax = Math.min(100, Math.max(...allValues) + 5);
+
+  if (!chart) {
+    chart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: dataset[0].labels!,
+        datasets: dataset
       },
-      chart: null,
-      loading: false
-    };
-  },
-  methods: {
-    async importCsv() {
-      this.loading = true;
-      try {
-        await axios.post('http://localhost:5000/import-csv');
-        await this.fetchMachines();
-        if (this.selectedMachine) await this.fetchMetrics();
-      } catch (error) {
-        alert('Failed to import CSV');
-        console.error(error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async fetchMachines() {
-      try {
-        const res = await axios.get('http://localhost:5000/machines', {
-          params: { page: 1, per_page: 100 }
-        });
-        this.machines = res.data.machines;
-        if (this.machines.length && !this.selectedMachine) {
-          this.selectedMachine = this.machines[0].name;
-          await this.fetchMetrics();
-        }
-      } catch (error) {
-        console.error('Failed to load machines', error);
-      }
-    },
-    async fetchMetrics() {
-      if (!this.selectedMachine) return;
-
-      try {
-        const machine = this.machines.find(m => m.name === this.selectedMachine);
-        if (!machine) return;
-
-        const id = machine.id;
-        const days = this.timeRange;
-
-        const metricTypes = ['oee', 'availability', 'performance', 'output_quality'];
-        const metricResults = {};
-
-        for (const type of metricTypes) {
-          const res = await axios.get(`http://localhost:5000/machines/${id}/dashboard/${type}`, {
-            params: { days }
-          });
-
-          const values = res.data.data.map(m => m.value);
-          const average = values.length ? (values.reduce((a, b) => a + b, 0) / values.length).toFixed(2) : 0;
-
-          metricResults[type] = {
-            values: values,
-            average: average,
-            timestamps: res.data.data.map(m => m.timestamp)
-          };
-        }
-
-        this.average = {
-          oee: metricResults.oee.average,
-          availability: metricResults.availability.average,
-          performance: metricResults.performance.average,
-          quality: metricResults.output_quality.average
-        };
-
-        const datasets = metricTypes.map(type => ({
-          label: type,
-          data: metricResults[type].values,
-          borderColor: this.getColor(type),
-          fill: false,
-          tension: 0.1
-        }));
-
-        if (this.chart) this.chart.destroy();
-        const ctx = this.$refs.chartCanvas.getContext('2d');
-        this.chart = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: metricResults.oee.timestamps,
-            datasets
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          legend: {
+            position: 'top',
+            onClick: (_, legendItem) => {
+              const type = metricTypes[legendItem.datasetIndex as number];
+              toggleMetric(type);
+            }
           },
-          options: {
-            responsive: true,
-            scales: {
-              y: {
-                min: 0,
-                max: 100
-              }
+          tooltip: {
+            callbacks: {
+              label: ctx => `${ctx.dataset.label}: ${ctx.formattedValue}%`
             }
           }
-        });
-
-      } catch (error) {
-        console.error('Failed to load metrics', error);
+        },
+        scales: {
+          x: {
+            type: 'time',
+            time: { unit: unitFor(timeRange.value), tooltipFormat: 'yyyy-MM-dd' },
+            ticks: { maxRotation: 45 }
+          },
+          y: {
+            min: yMin,
+            max: yMax,
+            ticks: { callback: v => `${v}%` }
+          }
+        }
       }
-    },
-    getColor(key) {
-      return {
-        oee: '#007bff',
-        availability: '#28a745',
-        performance: '#ffc107',
-        output_quality: '#dc3545'
-      }[key] || '#000';
-    }
-  },
-  watch: {
-    selectedMachine() {
-      this.fetchMetrics();
-    },
-    timeRange() {
-      this.fetchMetrics();
-    }
-  },
-  mounted() {
-    this.fetchMachines();
+    });
+  } else {
+    chart.options.scales!.x['time'].unit = unitFor(timeRange.value);
+    chart.data.labels = dataset[0].labels!;
+    chart.data.datasets = dataset;
+    chart.options.scales!.y.min = yMin;
+    chart.options.scales!.y.max = yMax;
+    chart.update();
   }
-};
+}
+
+function unitFor(days: number) {
+  if (days <= 30) return 'day';
+  if (days <= 90) return 'week';
+  return 'month';
+}
+
+async function fetchMachines() {
+  const { data } = await api.get('/machines', { params: { page: 1, per_page: 100 } });
+  machines.value = data.machines;
+  if (machines.value.length && !selectedMachineId.value) {
+    selectedMachineId.value = machines.value[0].id;
+  }
+}
+
+async function fetchMetrics() {
+  if (!selectedMachineId.value) return;
+  const id = selectedMachineId.value;
+  const days = timeRange.value;
+
+  const ctrl = new AbortController();
+
+  try {
+    const raw: Record<string, { value: number; timestamp: string }[]> = {};
+
+    await Promise.all(
+      metricTypes.map(async type => {
+        const res = await api.get(`/machines/${id}/dashboard/${type}`, {
+          params: { days },
+          signal: ctrl.signal
+        });
+        raw[type] = res.data.data;
+      })
+    );
+
+    latestRaw = raw;
+
+    const datasets = metricTypes.map(type => {
+      const { values, labels } = prepareSeries(raw[type]);
+      kpi[type] = avg(values);
+
+      return {
+        label: pretty(type),
+        data: values,
+        labels,
+        borderColor: colorMap[type as keyof typeof colorMap],
+        tension: 0.2,
+        pointRadius: 3,
+        pointHoverRadius: 5,
+        hidden: !visibleMetrics.value.includes(type)
+      } as ChartDataset;
+    });
+
+    await nextTick();
+    buildOrUpdateChart(datasets);
+  } catch (e) {
+    if (axios.isCancel(e)) return;
+    console.error(e);
+  }
+}
+
+function prepareSeries(src: { value: number; timestamp: string }[]) {
+  if (timeRange.value === 365) {
+    const bucket: Record<string, { sum: number; count: number; ts: string }> = {};
+    for (const d of src) {
+      const date = new Date(d.timestamp);
+      const key = `${date.getFullYear()}-${date.getMonth()}`;
+      if (!bucket[key]) {
+        bucket[key] = { sum: 0, count: 0, ts: new Date(date.getFullYear(), date.getMonth(), 1).toISOString() };
+      }
+      bucket[key].sum += d.value;
+      bucket[key].count += 1;
+    }
+    const ordered = Object.keys(bucket)
+      .sort()
+      .map(k => bucket[k]);
+
+    return {
+      values: ordered.map(b => +(b.sum / b.count).toFixed(2)),
+      labels: ordered.map(b => b.ts)
+    };
+  }
+
+  return {
+    values: src.map(d => d.value),
+    labels: src.map(d => d.timestamp)
+  };
+}
+
+function toggleMetric(type: string) {
+  const idx = visibleMetrics.value.indexOf(type);
+  if (idx === -1) visibleMetrics.value.push(type);
+  else visibleMetrics.value.splice(idx, 1);
+}
+
+watch(visibleMetrics, () => {
+  if (!chart) return;
+  metricTypes.forEach((t, i) => {
+    chart!.setDatasetVisibility(i, visibleMetrics.value.includes(t));
+  });
+  chart!.update();
+});
+
+async function importCsv() {
+  loading.value = true;
+  try {
+    await api.post('/import-csv');
+    await fetchMachines();
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(fetchMachines);
+watch([selectedMachineId, timeRange], fetchMetrics);
+
+onBeforeUnmount(() => {
+  chart?.destroy();
+});
 </script>
 
 <style scoped>
-.dashboard {
-  padding: 20px;
-}
-
-h2 {
-  margin-bottom: 20px;
-}
-
-.controls {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-select, button {
-  padding: 8px 12px;
-  font-size: 1em;
-}
+.dashboard { padding: 20px; }
+.controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+select, button { padding: 8px 12px; font-size: 1em; }
 
 .metrics {
   display: grid;
@@ -206,25 +285,20 @@ select, button {
   gap: 20px;
   margin-bottom: 20px;
 }
-
 .metric {
   background-color: #fff;
   padding: 16px;
-  border-radius: 6px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
   text-align: center;
 }
+.metric h3 { margin: 0; font-size: 1.2em; color: #1a2a44; }
+.metric p { margin: 8px 0 0; font-size: 1.6em; font-weight: 600; color: #007bff; }
 
-.metric h3 {
-  margin: 0;
-  font-size: 1.2em;
-  color: #1a2a44;
-}
+.metric-toggle { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
+.metric-toggle label { user-select: none; font-size: .9em; }
+.metric-toggle input { margin-right: 4px; }
 
-.metric p {
-  margin: 8px 0 0;
-  font-size: 1.6em;
-  font-weight: bold;
-  color: #007bff;
-}
+.chart-wrapper { position: relative; width: 100%; height: 400px; }
+canvas { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.1); width: 100%; height: 100%; }
 </style>

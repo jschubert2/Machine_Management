@@ -4,10 +4,8 @@
       <i :class="isSidebarVisible ? 'fas fa-times' : 'fas fa-bars'"></i>
     </button>
 
-    <!-- Sidebar -->
     <Sidebar :is-visible="isSidebarVisible" />
 
-    <!-- Main content -->
     <div class="content" :class="{ 'content-shifted': isSidebarVisible }">
       <router-view
         :machines="machines"
