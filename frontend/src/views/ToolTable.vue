@@ -12,6 +12,8 @@
             <th>Name</th>
             <th>Type</th>
             <th>Status</th>
+            <th>Wear Level</th>
+            <th>Storage Location</th>
             <th>Created At</th>
           </tr>
         </thead>
@@ -20,7 +22,9 @@
             <td>{{ tool.id }}</td>
             <td>{{ tool.name }}</td>
             <td>{{ tool.type }}</td>
-            <td>{{ tool.metrics && tool.metrics[0] ? tool.metrics[0].status : 'N/A' }}</td>
+            <td :class="statusClass(tool.metrics?.[0]?.status)"> {{ tool.metrics?.[0]?.status || '-' }} </td>
+            <td :class="wearLevelClass(tool.metrics?.[0]?.wear_level)"> {{ tool.metrics?.[0]?.wear_level ?? '-' }} </td>
+            <td>{{ tool.metrics && tool.metrics[0] ? tool.metrics[0].storage_location : '-' }}</td>
             <td>{{ tool.created_at }}</td>
           </tr>
         </tbody>
@@ -64,12 +68,28 @@ export default {
     },
   },
   methods: {
-    changePage(page) {
-      if (page >= 1 && page <= this.totalPages) {
-        this.currentPage = page;
-      }
-    },
+  changePage(page) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+    }
   },
+  statusClass(status) {
+    switch (status?.toLowerCase()) {
+      case 'attached':
+        return 'status-attached';
+      case 'scrapped':
+        return 'status-scrapped';
+      case 'storage':
+      case 'in storage':
+        return 'status-storage';
+      default:
+        return '';
+    }
+  },
+  wearLevelClass(level) {
+    return typeof level === 'number' && level > 80 ? 'wear-high' : '';
+  }
+}
 };
 </script>
 
@@ -120,4 +140,21 @@ button:disabled {
   padding: 20px;
   color: #666;
 }
+.status-attached {
+  color: green;
+  font-weight: bold;
+}
+.status-scrapped {
+  color: red;
+  font-weight: bold;
+}
+.status-storage {
+  color: orange;
+  font-weight: bold;
+}
+.wear-high {
+  color: red;
+  font-weight: bold;
+}
+
 </style>

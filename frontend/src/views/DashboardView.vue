@@ -2,7 +2,6 @@
   <div class="dashboard">
     <h2>Dashboard</h2>
 
-
     <div class="controls">
       <select v-model="selectedMachineId">
         <option disabled value="">Select a machine</option>
@@ -15,15 +14,32 @@
 
       <button @click="importCsv" :disabled="loading">
         <span v-if="loading">Importing…</span>
-        <span v-else>Import CSV</span>
+        <span v-else>Import CSV</span>
       </button>
     </div>
 
+    <div class="kpi-squares">
+      <div class="kpi-square oee">
+        <h3>OEE</h3>
+        <p>{{ kpi.oee }}%</p>
+      </div>
+      <div class="kpi-square availability">
+        <h3>Availability</h3>
+        <p>{{ kpi.availability }}%</p>
+      </div>
+      <div class="kpi-square performance">
+        <h3>Performance</h3>
+        <p>{{ kpi.performance }}%</p>
+      </div>
+      <div class="kpi-square quality">
+        <h3>Quality</h3>
+        <p>{{ kpi.output_quality }}%</p>
+      </div>
+    </div>
 
     <div class="metrics">
       <MetricCard v-for="card in cards" :key="card.label" :label="card.label" :value="card.value" />
     </div>
-
 
     <div class="metric-toggle">
       <label v-for="t in metricTypes" :key="t">
@@ -31,7 +47,6 @@
         {{ pretty(t) }}
       </label>
     </div>
-
 
     <div class="chart-wrapper">
       <canvas ref="chartCanvas"></canvas>
@@ -46,20 +61,20 @@ import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 
 const metricTypes = ['oee', 'availability', 'performance', 'output_quality'] as const;
-const colorMap: Record<typeof metricTypes[number], string> = {
+const colorMap = {
   oee: '#007bff',
   availability: '#28a745',
   performance: '#ffc107',
   output_quality: '#dc3545'
 };
 
-const ranges = [7, 30, 365] as const;
+const ranges = [7, 30, 90] as const;
 
 const machines = ref<{ id: string; name: string }[]>([]);
-const selectedMachineId = ref<string>('');
-const timeRange = ref<number>(7);
+const selectedMachineId = ref('');
+const timeRange = ref(7);
 const visibleMetrics = ref<string[]>([...metricTypes]);
-const loading = ref<boolean>(false);
+const loading = ref(false);
 
 let latestRaw: Record<string, any[]> | null = null;
 
@@ -76,7 +91,7 @@ const api = axios.create({
 });
 
 const pretty = (t: string) => t.replace('_', ' ').toUpperCase();
-const labelOf = (d: number) => (d === 365 ? 'year' : `${d} days`);
+const labelOf = (d: number) => (d === 90 ? '3 months' : `${d} days`);
 
 function avg(arr: number[]): number {
   return arr.length ? +(arr.reduce((a, b) => a + b) / arr.length).toFixed(2) : 0;
@@ -97,7 +112,7 @@ const cards = computed(() => [
 const chartCanvas = ref<HTMLCanvasElement | null>(null);
 let chart: Chart | null = null;
 
-function buildOrUpdateChart(dataset: ChartDataset[]) {
+function buildOrUpdateChart(dataset: any[]) {
   const ctx = chartCanvas.value?.getContext('2d');
   if (!ctx) return;
 
@@ -109,7 +124,7 @@ function buildOrUpdateChart(dataset: ChartDataset[]) {
     chart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: dataset[0].labels!,
+        labels: dataset[0].labels,
         datasets: dataset
       },
       options: {
@@ -146,7 +161,7 @@ function buildOrUpdateChart(dataset: ChartDataset[]) {
     });
   } else {
     chart.options.scales!.x['time'].unit = unitFor(timeRange.value);
-    chart.data.labels = dataset[0].labels!;
+    chart.data.labels = dataset[0].labels;
     chart.data.datasets = dataset;
     chart.options.scales!.y.min = yMin;
     chart.options.scales!.y.max = yMax;
@@ -198,12 +213,12 @@ async function fetchMetrics() {
         label: pretty(type),
         data: values,
         labels,
-        borderColor: colorMap[type as keyof typeof colorMap],
+        borderColor: colorMap[type],
         tension: 0.2,
         pointRadius: 3,
         pointHoverRadius: 5,
         hidden: !visibleMetrics.value.includes(type)
-      } as ChartDataset;
+      };
     });
 
     await nextTick();
@@ -214,25 +229,30 @@ async function fetchMetrics() {
   }
 }
 
+import { getISOWeek, startOfISOWeek, formatISO } from 'date-fns';
+
 function prepareSeries(src: { value: number; timestamp: string }[]) {
-  if (timeRange.value === 365) {
-    const bucket: Record<string, { sum: number; count: number; ts: string }> = {};
-    for (const d of src) {
-      const date = new Date(d.timestamp);
-      const key = `${date.getFullYear()}-${date.getMonth()}`;
-      if (!bucket[key]) {
-        bucket[key] = { sum: 0, count: 0, ts: new Date(date.getFullYear(), date.getMonth(), 1).toISOString() };
+  if (timeRange.value === 90) {
+    const weekBuckets: Record<string, { sum: number; count: number; label: string }> = {};
+
+    for (const entry of src) {
+      const date = new Date(entry.timestamp);
+      const weekKey = `${date.getFullYear()}-W${getISOWeek(date)}`;
+      const label = formatISO(startOfISOWeek(date), { representation: 'date' });
+
+      if (!weekBuckets[weekKey]) {
+        weekBuckets[weekKey] = { sum: 0, count: 0, label };
       }
-      bucket[key].sum += d.value;
-      bucket[key].count += 1;
+
+      weekBuckets[weekKey].sum += entry.value;
+      weekBuckets[weekKey].count += 1;
     }
-    const ordered = Object.keys(bucket)
-      .sort()
-      .map(k => bucket[k]);
+
+    const sorted = Object.values(weekBuckets).sort((a, b) => a.label.localeCompare(b.label));
 
     return {
-      values: ordered.map(b => +(b.sum / b.count).toFixed(2)),
-      labels: ordered.map(b => b.ts)
+      values: sorted.map(w => +(w.sum / w.count).toFixed(2)),
+      labels: sorted.map(w => w.label)
     };
   }
 
@@ -268,7 +288,6 @@ async function importCsv() {
 
 onMounted(fetchMachines);
 watch([selectedMachineId, timeRange], fetchMetrics);
-
 onBeforeUnmount(() => {
   chart?.destroy();
 });
@@ -278,6 +297,31 @@ onBeforeUnmount(() => {
 .dashboard { padding: 20px; }
 .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 select, button { padding: 8px 12px; font-size: 1em; }
+
+.kpi-squares {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 20px;
+}
+.kpi-square {
+  background-color: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  text-align: center;
+}
+.kpi-square h3 {
+  margin: 0;
+  font-size: 1.1em;
+  color: #1a2a44;
+}
+.kpi-square p {
+  margin: 8px 0 0;
+  font-size: 1.8em;
+  font-weight: 600;
+  color: #000; 
+}
 
 .metrics {
   display: grid;

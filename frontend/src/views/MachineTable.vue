@@ -1,8 +1,13 @@
 <template>
   <div class="machine-list">
     <h2>Machines</h2>
-    <button @click="importData" :disabled="machines.length > 0">Import</button>
-    <table>
+    <button @click="importData">Import</button>
+
+    <div v-if="machines.length === 0" class="no-data">
+      No data available. Please click "Import" to load machines.
+    </div>
+
+    <table v-else>
       <thead>
         <tr>
           <th>ID</th>
@@ -15,7 +20,11 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="machine in paginatedMachines" :key="machine.id" @click="openMachineDetails(machine.id)">
+        <tr
+          v-for="machine in paginatedMachines"
+          :key="machine.id"
+          @click="openMachineDetails(machine.id)"
+        >
           <td>{{ machine.id }}</td>
           <td>{{ machine.name }}</td>
           <td>{{ machine.group }}</td>
@@ -26,11 +35,13 @@
         </tr>
       </tbody>
     </table>
-    <div class="pagination">
+
+    <div class="pagination" v-if="machines.length > 0">
       <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
+
     <machine-details
       ref="machineDetailsModal"
       :machine="selectedMachine"
@@ -42,7 +53,7 @@
 
 <script>
 import { useStore } from 'vuex';
-import { computed, ref } from 'vue';
+import { computed, ref, onMounted } from 'vue';
 import MachineDetails from '../views/MachineDetails.vue';
 
 export default {
@@ -56,37 +67,6 @@ export default {
     const currentPage = ref(1);
     const itemsPerPage = 30;
 
-    const openMachineDetails = (machineId) => {
-      console.log('Opening details for machineId:', machineId); // Отладка
-      const machine = machines.value.find(m => m.id === machineId);
-      if (machine) {
-        selectedMachine.value = { ...machine, attached_tool: null, tool_wear: null }; // Изначально пусто
-        if (machineDetailsModal.value) {
-          machineDetailsModal.value.open();
-          console.log('Modal opened'); // Отладка
-        } else {
-          console.error('machineDetailsModal is not initialized');
-        }
-      } else {
-        console.error('Machine not found in store');
-      }
-    };
-
-    const closeMachineDetails = () => {
-      selectedMachine.value = null;
-      if (machineDetailsModal.value) {
-        machineDetailsModal.value.close();
-      }
-    };
-
-    const updateMachine = (updatedMachine) => {
-      selectedMachine.value = updatedMachine;
-      const index = machines.value.findIndex(m => m.id === updatedMachine.id);
-      if (index !== -1) {
-        machines.value.splice(index, 1, updatedMachine);
-      }
-    };
-
     const importData = async () => {
       try {
         await fetch('http://127.0.0.1:5000/import-csv', {
@@ -99,6 +79,32 @@ export default {
       } catch (error) {
         console.error('Error importing data:', error);
       }
+    };
+
+    onMounted(() => {
+      store.dispatch('fetchMachines');
+    });
+
+    const openMachineDetails = (machineId) => {
+      const machine = machines.value.find((m) => m.id === machineId);
+      if (machine) {
+        selectedMachine.value = { ...machine };
+        if (machineDetailsModal.value) {
+          machineDetailsModal.value.open();
+        }
+      }
+    };
+
+    const closeMachineDetails = () => {
+      selectedMachine.value = null;
+      if (machineDetailsModal.value) {
+        machineDetailsModal.value.close();
+      }
+    };
+
+    const updateMachine = (updatedMachine) => {
+      selectedMachine.value = { ...updatedMachine };
+      store.commit('updateMachine', updatedMachine);
     };
 
     const paginatedMachines = computed(() => {
@@ -162,12 +168,7 @@ button {
   margin-bottom: 10px;
 }
 
-button:disabled {
-  background-color: #cccccc;
-  cursor: not-allowed;
-}
-
-button:hover:not(:disabled) {
+button:hover {
   background-color: #0056b3;
 }
 
@@ -178,7 +179,8 @@ table {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
-th, td {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #ddd;
@@ -213,5 +215,11 @@ td {
 
 .pagination button {
   padding: 8px 16px;
+}
+
+.no-data {
+  color: #666;
+  margin-top: 20px;
+  font-style: italic;
 }
 </style>

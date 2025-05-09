@@ -1,10 +1,9 @@
 <template>
   <div class="app">
-    <button class="toggle-sidebar" @click="toggleSidebar">
-      <i :class="isSidebarVisible ? 'fas fa-times' : 'fas fa-bars'"></i>
-    </button>
+    
+    <button class="open-btn" @click="isSidebarVisible = true">☰</button>
 
-    <Sidebar :is-visible="isSidebarVisible" />
+    <Sidebar :isVisible="isSidebarVisible" @close="isSidebarVisible = false" />
 
     <div class="content" :class="{ 'content-shifted': isSidebarVisible }">
       <router-view
@@ -17,8 +16,8 @@
 </template>
 
 <script>
-import Sidebar from './components/Sidebar.vue';
-import axios from 'axios';
+import Sidebar from './components/Sidebar.vue'
+import axios from 'axios'
 
 export default {
   components: { Sidebar },
@@ -27,34 +26,29 @@ export default {
       isSidebarVisible: true,
       machines: [],
       tools: [],
-    };
+    }
   },
   methods: {
-    toggleSidebar() {
-      this.isSidebarVisible = !this.isSidebarVisible;
-    },
     async handleImportData() {
       try {
-        const response = await axios.post('http://127.0.0.1:5000/import-csv');
-        console.log('Import response:', response.data);
+        const response = await axios.post('http://127.0.0.1:5000/import-csv')
+        console.log('Import response:', response.data)
 
-        
         const machinesResponse = await axios.get('http://127.0.0.1:5000/machines', {
           params: { page: 1, per_page: 50 },
-        });
-        this.machines = machinesResponse.data.machines;
+        })
+        this.machines = machinesResponse.data.machines
 
-       
         const toolsResponse = await axios.get('http://127.0.0.1:5000/tools', {
           params: { page: 1, per_page: 30 },
-        });
-        this.tools = toolsResponse.data.tools || [];
+        })
+        this.tools = toolsResponse.data.tools || []
       } catch (error) {
-        console.error('Error importing data:', error);
+        console.error('Error importing data:', error)
       }
     },
   },
-};
+}
 </script>
 
 <style scoped>
@@ -63,27 +57,17 @@ export default {
   position: relative;
 }
 
-.toggle-sidebar {
+.open-btn {
   position: fixed;
   top: 10px;
   left: 10px;
-  z-index: 1000;
-  padding: 6px;
-  background-color: #2c3e50;
+  background: #1a2a44;
   color: white;
   border: none;
-  border-radius: 4px;
+  font-size: 1.5rem;
+  padding: 5px 10px;
+  z-index: 1100;
   cursor: pointer;
-  font-size: 1.0em;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-}
-
-.toggle-sidebar:hover {
-  background-color: #0056b3;
 }
 
 .content {
