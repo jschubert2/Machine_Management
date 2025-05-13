@@ -29,14 +29,14 @@ def get_machine_maintenance(machine_id):
 def add_maintenance():
     data = request.get_json()
 
-    # Input validation (basic)
+    # basic input validation
     required_fields = ['machine_id', 'performed_by', 'notes', 'date', 'planned']
     for field in required_fields:
         if field not in data:
             return jsonify({"error": f"Missing field: {field}"}), 400
 
     try:
-        planned = str(data['planned']).lower() == 'true'  # Convert to boolean
+        planned = str(data['planned']).lower() == 'true'  # Convert to bool
 
         maintenance = MaintenanceLog(
             machine_id=data['machine_id'],

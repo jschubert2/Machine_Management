@@ -8,7 +8,7 @@ os.makedirs('csv', exist_ok=True)
 NUM_MACHINES = 50
 NUM_TOOLS = 30
 MAINTENANCE_YEARS = [2021, 2022, 2023]
-METRIC_MONTHS = [2, 3, 4]  # Février, Mars, Avril
+METRIC_MONTHS = [2, 3, 4]  # February, March, April
 CURRENT_YEAR = datetime.now().year
 
 

@@ -11,14 +11,14 @@ CSV_DIR = os.path.join(os.path.dirname(__file__), '..', 'csv')
 
 def parse_date(date_str):
     try:
-        # First try full ISO format (with time)
+        # try full ISO format first
         return datetime.fromisoformat(date_str)
     except ValueError:
         try:
-            # Then try date only
+            # try date only
             return datetime.strptime(date_str, "%Y-%m-%d")
         except ValueError:
-            # Then try date and time with seconds (if your CSV uses that)
+            # try date with time 
             return datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
 
 @bp.route('/import-csv', methods=['POST'])
@@ -51,7 +51,7 @@ def import_csv():
                     created_at=parse_date(row['created_at'])
                 )
                 db.session.add(tool)
-                db.session.flush()  # Get the generated tool.id before commit
+                db.session.flush()  
 
                 metric = ToolMetric(
                     tool_id=tool.id,
@@ -66,7 +66,7 @@ def import_csv():
             reader = csv.DictReader(f)
             for row in reader:
 
-                #because we have no real users in Sprint 1 we use random names for now
+                #because we have no real users with user id's in Sprint 1 we use random names for now
                 tempuser = "Mark"
                 if (row['performed_by'] == "1"):
                     tempuser = "Olaf"
@@ -81,7 +81,7 @@ def import_csv():
 
                 log = MaintenanceLog(
                     machine_id=int(row['machine_id']),
-                    performed_by=tempuser, #for testing
+                    performed_by=tempuser, #will be changed later into row['performed_by']
                     date=parse_date(row['date']),
                     notes=row['notes'],
                     planned=row['planned'].lower() == 'true'

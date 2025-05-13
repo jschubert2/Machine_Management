@@ -12,7 +12,7 @@ def get_machines():
     machines_paginated = Machine.query.paginate(page=page, per_page=per_page, error_out=False)
     machines = machines_paginated.items
 
-    # Get the latest metrics for each machine using DISTINCT ON (PostgreSQL-specific)
+    # Get latest metrics for each machine
     latest_metrics = (
         db.session.query(MachineMetric)
         .distinct(MachineMetric.machine_id)
@@ -20,7 +20,7 @@ def get_machines():
         .all()
     )
 
-    # Map machine_id -> status
+    # Map machine_id to status
     latest_status_map = {metric.machine_id: metric.status for metric in latest_metrics}
 
     machine_list = []
@@ -86,9 +86,9 @@ def update_machine_tool(machine_id):
     assignment = ToolAssignment.query.get(machine_id)
 
     if assignment:
-        assignment.tool_id = new_tool_id  # update existing
+        assignment.tool_id = new_tool_id
     else:
-        assignment = ToolAssignment(machine_id=machine_id, tool_id=new_tool_id)  # create new
+        assignment = ToolAssignment(machine_id=machine_id, tool_id=new_tool_id)  
         db.session.add(assignment)
 
     db.session.commit()

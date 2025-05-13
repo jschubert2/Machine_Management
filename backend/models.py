@@ -2,9 +2,9 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-# Machine Model
+
 class Machine(db.Model):
-    __tablename__ = 'machines' #new
+    __tablename__ = 'machines' 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     category = db.Column(db.String(50), nullable=False) #default="Manual"
