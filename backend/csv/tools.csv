@@ -1,31 +1,31 @@
-id,name,type,created_at,status,wear_level,storage_location
-1,Tool_1,Grinding,2020-01-23,attached,47,
-2,Tool_2,Cutting,2018-03-17,attached,9,
-3,Tool_3,Drilling,2021-02-16,in storage,11,Cabinet E5
-4,Tool_4,Grinding,2019-12-01,attached,31,
-5,Tool_5,Grinding,2022-08-12,attached,41,
-6,Tool_6,Milling,2022-04-30,in storage,70,Rack B2
-7,Tool_7,Cutting,2022-03-03,in storage,32,Rack B2
-8,Tool_8,Milling,2020-12-14,attached,65,
-9,Tool_9,Drilling,2019-03-12,in storage,97,Cabinet E5
-10,Tool_10,Cutting,2022-08-28,attached,44,
-11,Tool_11,Grinding,2022-09-05,in storage,99,Rack D4
-12,Tool_12,Drilling,2020-07-06,in storage,81,Shelf A1
-13,Tool_13,Milling,2022-07-05,attached,49,
-14,Tool_14,Grinding,2018-09-25,attached,14,
-15,Tool_15,Grinding,2018-06-28,in storage,87,Rack D4
-16,Tool_16,Drilling,2021-02-23,in storage,25,Rack B2
-17,Tool_17,Milling,2022-11-17,attached,13,
-18,Tool_18,Grinding,2019-09-18,in storage,92,Shelf A1
-19,Tool_19,Cutting,2018-03-17,attached,92,
-20,Tool_20,Cutting,2022-04-27,in storage,36,Rack D4
-21,Tool_21,Drilling,2019-11-02,in storage,59,Rack B2
-22,Tool_22,Grinding,2018-03-05,scrapped,45,
-23,Tool_23,Cutting,2019-05-24,attached,64,
-24,Tool_24,Grinding,2018-03-08,scrapped,31,
-25,Tool_25,Drilling,2021-08-15,scrapped,88,
-26,Tool_26,Drilling,2020-07-05,attached,90,
-27,Tool_27,Cutting,2020-12-14,in storage,62,Cabinet E5
-28,Tool_28,Cutting,2022-08-11,attached,34,
-29,Tool_29,Grinding,2022-11-24,in storage,28,Shelf C3
-30,Tool_30,Milling,2018-04-04,in storage,27,Cabinet E5
+id,name,type,created_at
+1,ToolModel-101,Grinding,2019-06-10
+2,ToolModel-102,Milling,2021-11-18
+3,ToolModel-103,Drilling,2022-02-11
+4,ToolModel-104,Grinding,2021-09-20
+5,ToolModel-105,Drilling,2019-09-01
+6,ToolModel-106,Drilling,2023-03-02
+7,ToolModel-107,Drilling,2018-02-10
+8,ToolModel-108,Milling,2018-09-13
+9,ToolModel-109,Grinding,2020-01-31
+10,ToolModel-110,Drilling,2021-12-16
+11,ToolModel-111,Milling,2020-03-08
+12,ToolModel-112,Drilling,2019-05-28
+13,ToolModel-113,Grinding,2019-12-13
+14,ToolModel-114,Drilling,2023-01-02
+15,ToolModel-115,Drilling,2022-08-04
+16,ToolModel-116,Cutting,2022-12-13
+17,ToolModel-117,Cutting,2022-09-26
+18,ToolModel-118,Grinding,2023-02-05
+19,ToolModel-119,Drilling,2019-02-12
+20,ToolModel-120,Grinding,2022-05-17
+21,ToolModel-121,Milling,2021-03-25
+22,ToolModel-122,Drilling,2019-01-19
+23,ToolModel-123,Drilling,2020-04-10
+24,ToolModel-124,Milling,2018-01-19
+25,ToolModel-125,Drilling,2021-04-30
+26,ToolModel-126,Drilling,2019-09-30
+27,ToolModel-127,Milling,2018-01-12
+28,ToolModel-128,Drilling,2022-05-11
+29,ToolModel-129,Grinding,2018-10-04
+30,ToolModel-130,Drilling,2018-08-06

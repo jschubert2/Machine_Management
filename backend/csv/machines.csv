@@ -1,51 +1,51 @@
-machine_id,name,category,group,manufacturer,created_at,status
-1,Machine_1,Automatic,Assembly A,Manufacturer_3,2022-01-15,Running
-2,Machine_2,Automatic,Welding Bay,Manufacturer_3,2019-04-30,Running
-3,Machine_3,Automatic,CNC,Manufacturer_8,2022-01-20,Offline
-4,Machine_4,Automatic,Welding Bay,Manufacturer_8,2023-04-01,Running
-5,Machine_5,Manual,Welding Bay,Manufacturer_6,2022-03-16,Running
-6,Machine_6,Manual,Press,Manufacturer_10,2020-04-29,Running
-7,Machine_7,Automatic,Assembly A,Manufacturer_5,2018-10-24,Running
-8,Machine_8,Automatic,Press,Manufacturer_8,2021-05-04,Running
-9,Machine_9,Manual,Press,Manufacturer_4,2019-07-29,Running
-10,Machine_10,Automatic,Welding Bay,Manufacturer_4,2018-10-25,Running
-11,Machine_11,Manual,Welding Bay,Manufacturer_1,2018-05-03,Offline
-12,Machine_12,Manual,Press,Manufacturer_6,2019-02-28,Offline
-13,Machine_13,Manual,Assembly A,Manufacturer_1,2021-12-02,Offline
-14,Machine_14,Automatic,CNC,Manufacturer_8,2023-04-29,Offline
-15,Machine_15,Manual,CNC,Manufacturer_3,2019-12-24,Running
-16,Machine_16,Manual,Press,Manufacturer_3,2021-10-14,Running
-17,Machine_17,Automatic,Painting,Manufacturer_1,2021-08-18,Offline
-18,Machine_18,Automatic,Painting,Manufacturer_1,2019-01-09,Offline
-19,Machine_19,Automatic,Painting,Manufacturer_6,2020-10-02,Offline
-20,Machine_20,Automatic,Painting,Manufacturer_8,2021-02-10,Offline
-21,Machine_21,Automatic,Painting,Manufacturer_1,2022-12-16,Running
-22,Machine_22,Automatic,CNC,Manufacturer_6,2019-07-12,Running
-23,Machine_23,Manual,Press,Manufacturer_6,2021-07-13,Offline
-24,Machine_24,Manual,Press,Manufacturer_6,2022-03-29,Running
-25,Machine_25,Automatic,Painting,Manufacturer_6,2019-03-07,Offline
-26,Machine_26,Manual,CNC,Manufacturer_6,2019-05-09,Running
-27,Machine_27,Manual,Welding Bay,Manufacturer_3,2018-06-28,Offline
-28,Machine_28,Manual,Welding Bay,Manufacturer_5,2020-04-07,Offline
-29,Machine_29,Automatic,Press,Manufacturer_10,2019-07-27,Running
-30,Machine_30,Manual,Press,Manufacturer_6,2019-09-25,Running
-31,Machine_31,Manual,Press,Manufacturer_5,2021-08-31,Offline
-32,Machine_32,Manual,Painting,Manufacturer_1,2018-06-08,Running
-33,Machine_33,Automatic,Welding Bay,Manufacturer_4,2018-05-09,Offline
-34,Machine_34,Manual,Painting,Manufacturer_6,2019-02-20,Offline
-35,Machine_35,Automatic,Press,Manufacturer_7,2018-04-18,Offline
-36,Machine_36,Manual,CNC,Manufacturer_3,2018-06-15,Offline
-37,Machine_37,Manual,Assembly A,Manufacturer_10,2018-04-04,Offline
-38,Machine_38,Manual,Painting,Manufacturer_6,2023-04-27,Offline
-39,Machine_39,Automatic,Welding Bay,Manufacturer_3,2018-05-01,Running
-40,Machine_40,Manual,Painting,Manufacturer_8,2021-12-29,Offline
-41,Machine_41,Automatic,Welding Bay,Manufacturer_10,2019-09-21,Running
-42,Machine_42,Automatic,Press,Manufacturer_2,2020-08-23,Running
-43,Machine_43,Manual,Welding Bay,Manufacturer_6,2018-04-06,Running
-44,Machine_44,Automatic,Assembly A,Manufacturer_3,2021-06-26,Running
-45,Machine_45,Manual,Press,Manufacturer_6,2020-07-10,Offline
-46,Machine_46,Manual,Painting,Manufacturer_6,2020-05-25,Running
-47,Machine_47,Automatic,CNC,Manufacturer_5,2019-07-29,Running
-48,Machine_48,Manual,Painting,Manufacturer_6,2019-06-26,Offline
-49,Machine_49,Manual,Press,Manufacturer_1,2020-03-24,Running
-50,Machine_50,Manual,Press,Manufacturer_7,2019-03-19,Offline
+id,name,category,group,manufacturer,created_at
+1,CNC Master 3000 #1,Automatic,Painting,Bosch,2020-03-20
+2,HydraDrill H7 #2,Manual,Press,GE Industrial,2019-12-02
+3,SwiftCutter S2 #3,Manual,CNC,Siemens,2019-12-29
+4,CNC Master 3000 #4,Automatic,Welding Bay,Fanuc,2021-09-22
+5,CNC Master 3000 #5,Automatic,CNC,Siemens,2021-07-14
+6,ForgeLine Z1 #6,Manual,Assembly A,Mitsubishi,2018-08-18
+7,AutoMill 200 #7,Automatic,Painting,GE Industrial,2021-01-05
+8,HydraDrill H7 #8,Automatic,Press,GE Industrial,2020-11-08
+9,AutoMill 200 #9,Manual,Assembly A,GE Industrial,2021-09-14
+10,HydraDrill H7 #10,Automatic,Painting,Fanuc,2019-06-09
+11,RoboPress 9 #11,Manual,Welding Bay,GE Industrial,2018-06-24
+12,RoboPress 9 #12,Manual,Painting,Siemens,2019-04-03
+13,SwiftCutter S2 #13,Manual,Painting,Fanuc,2020-12-23
+14,ForgeLine Z1 #14,Manual,Press,GE Industrial,2018-11-25
+15,CNC Master 3000 #15,Automatic,Welding Bay,Bosch,2022-10-06
+16,CNC Master 3000 #16,Manual,Assembly A,Fanuc,2023-03-11
+17,AutoMill 200 #17,Automatic,Assembly A,Mitsubishi,2019-08-03
+18,LathePro X #18,Manual,Welding Bay,Mitsubishi,2021-06-27
+19,RoboPress 9 #19,Automatic,Assembly A,Bosch,2018-11-25
+20,CNC Master 3000 #20,Manual,Painting,Mitsubishi,2022-06-10
+21,AutoMill 200 #21,Manual,Press,Mitsubishi,2019-11-26
+22,LathePro X #22,Manual,Welding Bay,Bosch,2018-07-18
+23,ForgeLine Z1 #23,Manual,Assembly A,Siemens,2022-09-10
+24,CNC Master 3000 #24,Manual,CNC,Fanuc,2021-12-01
+25,MegaWeld M5 #25,Manual,CNC,Bosch,2021-05-01
+26,SwiftCutter S2 #26,Manual,Painting,Bosch,2019-05-15
+27,AutoMill 200 #27,Automatic,Painting,Mitsubishi,2019-02-03
+28,SwiftCutter S2 #28,Manual,Press,GE Industrial,2022-03-01
+29,HydraDrill H7 #29,Automatic,Painting,Fanuc,2022-04-03
+30,AutoMill 200 #30,Automatic,Welding Bay,Siemens,2021-07-11
+31,RoboPress 9 #31,Manual,Press,Mitsubishi,2018-05-12
+32,LathePro X #32,Automatic,Press,Mitsubishi,2020-02-15
+33,MegaWeld M5 #33,Automatic,Painting,GE Industrial,2021-03-22
+34,AutoMill 200 #34,Manual,Painting,GE Industrial,2023-04-26
+35,MegaWeld M5 #35,Automatic,CNC,Fanuc,2021-07-21
+36,CNC Master 3000 #36,Manual,Assembly A,Mitsubishi,2021-03-02
+37,HydraDrill H7 #37,Automatic,Assembly A,Bosch,2019-07-07
+38,MegaWeld M5 #38,Automatic,CNC,Fanuc,2019-02-04
+39,MegaWeld M5 #39,Automatic,Assembly A,Fanuc,2019-09-16
+40,HydraDrill H7 #40,Manual,Press,Mitsubishi,2020-11-08
+41,CNC Master 3000 #41,Automatic,Painting,Mitsubishi,2020-06-07
+42,SwiftCutter S2 #42,Automatic,Welding Bay,Mitsubishi,2021-08-01
+43,SwiftCutter S2 #43,Manual,Press,Fanuc,2018-03-16
+44,HydraDrill H7 #44,Automatic,Welding Bay,Bosch,2020-07-09
+45,SwiftCutter S2 #45,Automatic,CNC,Bosch,2019-09-16
+46,MegaWeld M5 #46,Manual,Assembly A,Bosch,2021-12-09
+47,RoboPress 9 #47,Manual,Welding Bay,Mitsubishi,2023-03-07
+48,ForgeLine Z1 #48,Automatic,Painting,Fanuc,2019-05-15
+49,ForgeLine Z1 #49,Manual,Painting,Bosch,2021-09-26
+50,HydraDrill H7 #50,Manual,Assembly A,GE Industrial,2020-11-21
