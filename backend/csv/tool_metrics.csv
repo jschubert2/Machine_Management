@@ -1,0 +1,31 @@
+id,tool_id,status,storage_location,wear_level
+1,1,attached,,72
+2,2,attached,,10
+3,3,attached,,52
+4,4,attached,,82
+5,5,attached,,86
+6,6,attached,,61
+7,7,scrapped,,97
+8,8,scrapped,,27
+9,9,in storage,Shelf A1,67
+10,10,attached,,43
+11,11,attached,,65
+12,12,attached,,1
+13,13,in storage,Shelf A1,8
+14,14,scrapped,,79
+15,15,attached,,6
+16,16,in storage,Shelf C3,4
+17,17,scrapped,,76
+18,18,attached,,36
+19,19,in storage,Shelf C3,28
+20,20,attached,,88
+21,21,scrapped,,91
+22,22,scrapped,,29
+23,23,scrapped,,58
+24,24,attached,,94
+25,25,scrapped,,12
+26,26,attached,,24
+27,27,scrapped,,46
+28,28,scrapped,,57
+29,29,scrapped,,25
+30,30,in storage,Rack B2,90

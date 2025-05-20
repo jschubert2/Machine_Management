@@ -90,8 +90,8 @@ with open('csv/users.csv', 'w', newline='') as f:
 tools = []
 for tid in range(1, NUM_TOOLS+1):
     tools.append({
-        "id": tid,
-        "name": f"ToolModel-{100+tid}",
+        "id": tid,     
+        "name": f"{random.choice(['Drill', 'Cutter', 'Grinder', 'End Mill', 'Reamer', 'Boring Bar', 'Insert', 'Chuck', 'Collet', 'Saw'])} Model-{random.randint(100,999)}",
         "type": random.choice(tool_types),
         "created_at": random_date(start_date, end_date).isoformat()
     })
