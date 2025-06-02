@@ -120,13 +120,13 @@ with open('csv/tool_metrics.csv', 'w', newline='') as f:
 
 # --- tool_assignments.csv ---
 assignments = []
+machine_count = len(machines)
 for idx, t in enumerate(tools, start=1):
     assignments.append({
         "id": idx,
-        "machine_id": random.choice(machines)["id"],
+        "machine_id": (idx - 1) % machine_count + 1,  # cycles through machine IDs starting at 1
         "tool_id": t["id"]
     })
-
 with open('csv/tool_assignments.csv', 'w', newline='') as f:
     writer = csv.DictWriter(f, fieldnames=assignments[0].keys())
     writer.writeheader()

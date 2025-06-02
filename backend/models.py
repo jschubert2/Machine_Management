@@ -40,8 +40,7 @@ class MaintenanceLog(db.Model):
     __tablename__ = 'maintenance_logs'
     id = db.Column(db.Integer, primary_key=True)
     machine_id = db.Column(db.Integer, db.ForeignKey('machines.id'),nullable=False)
-    #performed_by = db.Column(db.Integer, db.ForeignKey('users.id'))
-    performed_by = db.Column(db.String(50))
+    performed_by = db.Column(db.Integer, db.ForeignKey('users.id'),nullable=False)
     date = db.Column(db.DateTime, nullable=False) #default=datetime.now()
     notes = db.Column(db.Text)
     planned = db.Column(db.Boolean, nullable=False)

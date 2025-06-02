@@ -1,151 +1,151 @@
 id,machine_id,performed_by,date,notes,planned
-1,1,7,2021-12-12,Checked calibration,True
-2,1,5,2022-10-31,Checked calibration,False
-3,1,7,2023-02-10,Replaced worn out parts,True
-4,2,7,2021-12-15,Checked calibration,True
-5,2,8,2022-06-11,Replaced filters,False
-6,2,6,2023-07-16,Checked calibration,True
-7,3,10,2021-01-03,Lubricated moving components,False
-8,3,3,2022-05-03,Replaced filters,True
-9,3,7,2023-01-28,Lubricated moving components,False
-10,4,3,2021-02-13,Cleaned machine,False
-11,4,4,2022-06-01,Lubricated moving components,True
-12,4,6,2023-09-13,Replaced filters,True
-13,5,9,2021-10-04,Checked calibration,False
-14,5,8,2022-06-12,Checked calibration,False
-15,5,10,2023-10-05,Lubricated moving components,True
-16,6,6,2021-08-07,Lubricated moving components,True
-17,6,8,2022-09-23,Replaced filters,False
-18,6,6,2023-01-02,Lubricated moving components,False
-19,7,10,2021-12-05,Checked calibration,False
-20,7,4,2022-10-02,Replaced worn out parts,False
-21,7,10,2023-06-13,Replaced worn out parts,True
-22,8,4,2021-01-16,Cleaned machine,False
-23,8,9,2022-03-13,Checked calibration,False
-24,8,10,2023-08-01,Checked calibration,False
-25,9,4,2021-11-08,Cleaned machine,False
-26,9,4,2022-01-27,Checked calibration,False
-27,9,10,2023-02-14,Replaced worn out parts,True
-28,10,10,2021-09-30,Lubricated moving components,True
-29,10,3,2022-05-22,Replaced worn out parts,False
-30,10,5,2023-07-18,Cleaned machine,True
-31,11,3,2021-08-13,Replaced filters,True
-32,11,6,2022-12-17,Lubricated moving components,False
-33,11,3,2023-01-12,Replaced worn out parts,False
-34,12,9,2021-03-13,Cleaned machine,False
-35,12,5,2022-04-26,Cleaned machine,False
-36,12,6,2023-02-25,Lubricated moving components,False
-37,13,5,2021-02-15,Lubricated moving components,True
-38,13,9,2022-02-02,Replaced worn out parts,True
-39,13,5,2023-04-24,Replaced worn out parts,False
-40,14,8,2021-09-30,Lubricated moving components,False
-41,14,8,2022-12-27,Replaced worn out parts,True
-42,14,3,2023-06-08,Cleaned machine,False
-43,15,7,2021-08-09,Replaced worn out parts,True
-44,15,3,2022-12-17,Lubricated moving components,True
-45,15,9,2023-06-08,Lubricated moving components,True
-46,16,3,2021-12-17,Checked calibration,True
-47,16,4,2022-09-18,Replaced filters,False
-48,16,3,2023-11-27,Replaced filters,True
-49,17,9,2021-10-16,Cleaned machine,False
-50,17,8,2022-10-29,Cleaned machine,False
-51,17,4,2023-11-22,Cleaned machine,True
-52,18,6,2021-03-31,Lubricated moving components,True
-53,18,8,2022-08-30,Replaced filters,False
-54,18,6,2023-01-16,Replaced filters,False
-55,19,5,2021-03-28,Lubricated moving components,False
-56,19,7,2022-02-10,Replaced worn out parts,False
-57,19,3,2023-04-03,Replaced worn out parts,False
-58,20,6,2021-12-11,Checked calibration,True
-59,20,8,2022-08-18,Replaced worn out parts,True
-60,20,3,2023-03-16,Lubricated moving components,False
-61,21,9,2021-07-06,Replaced worn out parts,False
-62,21,9,2022-09-02,Lubricated moving components,True
-63,21,7,2023-09-13,Checked calibration,False
-64,22,9,2021-05-29,Checked calibration,True
-65,22,8,2022-03-11,Lubricated moving components,False
-66,22,7,2023-05-01,Lubricated moving components,True
-67,23,8,2021-10-05,Replaced filters,False
-68,23,10,2022-05-11,Checked calibration,False
-69,23,8,2023-03-08,Cleaned machine,True
-70,24,4,2021-02-12,Cleaned machine,True
-71,24,3,2022-01-09,Replaced worn out parts,False
-72,24,4,2023-06-20,Replaced filters,True
-73,25,3,2021-07-19,Replaced worn out parts,False
-74,25,8,2022-12-15,Replaced worn out parts,True
-75,25,7,2023-03-30,Cleaned machine,False
-76,26,3,2021-05-15,Replaced worn out parts,True
-77,26,5,2022-01-24,Cleaned machine,True
-78,26,7,2023-04-14,Lubricated moving components,False
-79,27,3,2021-01-25,Replaced worn out parts,True
-80,27,6,2022-04-08,Checked calibration,False
-81,27,6,2023-04-06,Replaced worn out parts,False
-82,28,5,2021-10-16,Lubricated moving components,False
-83,28,10,2022-01-25,Replaced filters,False
-84,28,10,2023-10-03,Cleaned machine,True
-85,29,7,2021-06-28,Lubricated moving components,False
-86,29,9,2022-08-24,Replaced filters,False
-87,29,5,2023-12-27,Cleaned machine,True
-88,30,9,2021-04-05,Checked calibration,True
-89,30,5,2022-04-10,Checked calibration,True
-90,30,8,2023-04-08,Replaced filters,True
-91,31,8,2021-09-19,Replaced filters,False
-92,31,9,2022-02-03,Checked calibration,True
-93,31,4,2023-07-10,Lubricated moving components,True
-94,32,10,2021-03-11,Lubricated moving components,False
-95,32,9,2022-01-11,Checked calibration,True
-96,32,5,2023-10-03,Checked calibration,True
-97,33,7,2021-10-29,Replaced filters,False
-98,33,10,2022-08-11,Replaced worn out parts,True
-99,33,7,2023-06-01,Replaced worn out parts,True
-100,34,6,2021-06-05,Cleaned machine,False
-101,34,7,2022-04-27,Replaced filters,True
-102,34,3,2023-07-29,Replaced filters,True
-103,35,3,2021-02-28,Cleaned machine,True
-104,35,9,2022-12-16,Lubricated moving components,True
-105,35,7,2023-03-15,Replaced worn out parts,True
-106,36,7,2021-08-15,Lubricated moving components,True
-107,36,9,2022-10-30,Lubricated moving components,True
-108,36,7,2023-05-09,Replaced worn out parts,False
-109,37,6,2021-08-19,Replaced worn out parts,False
-110,37,9,2022-03-06,Lubricated moving components,True
-111,37,5,2023-03-13,Cleaned machine,False
-112,38,4,2021-12-03,Cleaned machine,True
-113,38,6,2022-10-01,Replaced filters,True
-114,38,10,2023-01-30,Replaced worn out parts,False
-115,39,4,2021-10-30,Lubricated moving components,False
-116,39,7,2022-01-03,Lubricated moving components,True
-117,39,3,2023-03-15,Cleaned machine,False
-118,40,10,2021-11-04,Replaced worn out parts,True
-119,40,7,2022-03-05,Replaced worn out parts,True
-120,40,6,2023-09-30,Cleaned machine,True
-121,41,10,2021-05-20,Replaced worn out parts,False
-122,41,3,2022-08-22,Replaced worn out parts,False
-123,41,8,2023-11-27,Replaced filters,False
-124,42,4,2021-08-21,Replaced filters,False
-125,42,8,2022-01-03,Replaced filters,True
-126,42,4,2023-05-17,Replaced filters,False
-127,43,7,2021-01-06,Lubricated moving components,False
-128,43,8,2022-04-02,Replaced filters,True
-129,43,10,2023-11-21,Replaced worn out parts,True
-130,44,9,2021-08-15,Checked calibration,True
-131,44,10,2022-07-16,Lubricated moving components,False
-132,44,7,2023-11-12,Lubricated moving components,True
-133,45,6,2021-09-02,Replaced worn out parts,True
-134,45,5,2022-12-19,Checked calibration,False
-135,45,4,2023-02-05,Cleaned machine,True
-136,46,3,2021-05-08,Lubricated moving components,False
-137,46,10,2022-04-15,Replaced filters,True
-138,46,5,2023-03-25,Cleaned machine,False
-139,47,9,2021-02-24,Replaced worn out parts,True
-140,47,4,2022-12-27,Replaced filters,True
-141,47,5,2023-10-04,Checked calibration,False
-142,48,8,2021-08-14,Cleaned machine,True
-143,48,7,2022-01-13,Cleaned machine,False
-144,48,8,2023-04-19,Replaced worn out parts,True
-145,49,4,2021-10-13,Replaced filters,True
-146,49,3,2022-06-27,Cleaned machine,False
-147,49,3,2023-07-12,Cleaned machine,True
-148,50,5,2021-11-03,Replaced worn out parts,False
-149,50,5,2022-06-01,Checked calibration,True
-150,50,4,2023-11-30,Cleaned machine,True
+1,1,4,2021-05-07,Replaced worn out parts,True
+2,1,5,2022-02-03,Lubricated moving components,True
+3,1,7,2023-07-06,Checked calibration,False
+4,2,7,2021-06-02,Lubricated moving components,False
+5,2,4,2022-09-10,Cleaned machine,True
+6,2,9,2023-01-20,Replaced filters,False
+7,3,3,2021-12-23,Lubricated moving components,True
+8,3,4,2022-08-10,Checked calibration,True
+9,3,7,2023-07-03,Replaced worn out parts,True
+10,4,7,2021-11-05,Replaced worn out parts,False
+11,4,9,2022-09-08,Lubricated moving components,False
+12,4,5,2023-09-13,Lubricated moving components,False
+13,5,9,2021-01-28,Replaced worn out parts,False
+14,5,7,2022-09-21,Replaced filters,True
+15,5,7,2023-07-01,Replaced filters,False
+16,6,8,2021-11-17,Checked calibration,True
+17,6,3,2022-05-05,Replaced worn out parts,False
+18,6,4,2023-09-25,Replaced filters,False
+19,7,9,2021-01-28,Cleaned machine,False
+20,7,7,2022-08-06,Cleaned machine,True
+21,7,3,2023-11-30,Replaced worn out parts,True
+22,8,3,2021-07-30,Replaced filters,True
+23,8,8,2022-08-20,Checked calibration,True
+24,8,4,2023-05-18,Replaced worn out parts,True
+25,9,9,2021-05-01,Lubricated moving components,True
+26,9,5,2022-03-07,Replaced worn out parts,False
+27,9,9,2023-09-15,Replaced filters,True
+28,10,4,2021-06-20,Cleaned machine,True
+29,10,7,2022-11-20,Replaced worn out parts,False
+30,10,10,2023-03-11,Replaced filters,False
+31,11,7,2021-02-18,Replaced worn out parts,True
+32,11,9,2022-08-31,Replaced worn out parts,True
+33,11,6,2023-10-27,Replaced worn out parts,True
+34,12,8,2021-05-23,Replaced worn out parts,True
+35,12,7,2022-03-17,Cleaned machine,True
+36,12,4,2023-06-19,Checked calibration,False
+37,13,5,2021-12-04,Checked calibration,True
+38,13,3,2022-10-10,Checked calibration,False
+39,13,10,2023-08-07,Checked calibration,False
+40,14,4,2021-09-12,Checked calibration,True
+41,14,5,2022-11-13,Replaced filters,False
+42,14,3,2023-07-11,Replaced filters,True
+43,15,5,2021-08-18,Cleaned machine,True
+44,15,5,2022-05-31,Cleaned machine,True
+45,15,6,2023-02-02,Checked calibration,False
+46,16,5,2021-03-04,Replaced filters,False
+47,16,9,2022-12-06,Replaced worn out parts,True
+48,16,8,2023-12-18,Lubricated moving components,False
+49,17,5,2021-07-03,Replaced filters,True
+50,17,10,2022-09-14,Checked calibration,True
+51,17,8,2023-01-26,Replaced filters,False
+52,18,6,2021-12-12,Checked calibration,True
+53,18,3,2022-04-14,Replaced filters,False
+54,18,4,2023-08-07,Cleaned machine,False
+55,19,3,2021-08-19,Cleaned machine,False
+56,19,7,2022-08-14,Lubricated moving components,False
+57,19,7,2023-03-20,Replaced filters,False
+58,20,3,2021-04-10,Replaced worn out parts,True
+59,20,10,2022-04-02,Replaced filters,False
+60,20,7,2023-05-15,Replaced filters,False
+61,21,5,2021-08-16,Replaced worn out parts,True
+62,21,8,2022-01-26,Replaced worn out parts,True
+63,21,3,2023-12-02,Checked calibration,False
+64,22,9,2021-06-11,Lubricated moving components,False
+65,22,6,2022-11-26,Cleaned machine,False
+66,22,5,2023-08-24,Replaced worn out parts,False
+67,23,9,2021-09-02,Replaced filters,True
+68,23,8,2022-02-01,Checked calibration,False
+69,23,9,2023-05-30,Cleaned machine,True
+70,24,8,2021-01-01,Checked calibration,False
+71,24,4,2022-09-25,Checked calibration,False
+72,24,9,2023-07-11,Lubricated moving components,False
+73,25,9,2021-08-19,Replaced worn out parts,True
+74,25,3,2022-11-05,Checked calibration,True
+75,25,4,2023-08-14,Replaced filters,False
+76,26,7,2021-05-02,Checked calibration,True
+77,26,9,2022-11-08,Checked calibration,False
+78,26,9,2023-04-22,Replaced filters,True
+79,27,7,2021-09-21,Checked calibration,False
+80,27,3,2022-06-07,Cleaned machine,False
+81,27,5,2023-03-25,Replaced worn out parts,True
+82,28,5,2021-05-01,Cleaned machine,False
+83,28,3,2022-08-15,Replaced worn out parts,False
+84,28,10,2023-10-15,Lubricated moving components,False
+85,29,9,2021-11-24,Lubricated moving components,False
+86,29,3,2022-06-04,Replaced filters,False
+87,29,3,2023-05-15,Replaced worn out parts,False
+88,30,6,2021-05-24,Replaced worn out parts,False
+89,30,3,2022-04-22,Cleaned machine,False
+90,30,3,2023-05-23,Cleaned machine,True
+91,31,10,2021-07-21,Replaced worn out parts,True
+92,31,4,2022-07-24,Replaced worn out parts,True
+93,31,5,2023-05-25,Checked calibration,True
+94,32,9,2021-10-19,Replaced worn out parts,False
+95,32,5,2022-02-09,Cleaned machine,False
+96,32,9,2023-07-17,Cleaned machine,True
+97,33,3,2021-09-03,Checked calibration,True
+98,33,6,2022-10-28,Replaced worn out parts,False
+99,33,5,2023-08-27,Cleaned machine,True
+100,34,8,2021-08-19,Replaced worn out parts,True
+101,34,6,2022-09-27,Lubricated moving components,False
+102,34,6,2023-11-08,Replaced filters,False
+103,35,3,2021-06-27,Checked calibration,False
+104,35,9,2022-09-12,Replaced worn out parts,True
+105,35,10,2023-01-31,Lubricated moving components,False
+106,36,3,2021-08-22,Replaced filters,True
+107,36,3,2022-02-22,Replaced worn out parts,True
+108,36,4,2023-05-27,Checked calibration,True
+109,37,10,2021-04-03,Lubricated moving components,False
+110,37,10,2022-05-10,Lubricated moving components,False
+111,37,6,2023-12-12,Replaced filters,False
+112,38,10,2021-01-13,Lubricated moving components,True
+113,38,4,2022-05-11,Replaced filters,True
+114,38,4,2023-06-23,Checked calibration,True
+115,39,7,2021-02-18,Cleaned machine,False
+116,39,6,2022-06-22,Cleaned machine,True
+117,39,10,2023-04-04,Replaced worn out parts,True
+118,40,3,2021-09-23,Checked calibration,False
+119,40,9,2022-09-04,Lubricated moving components,False
+120,40,7,2023-04-21,Checked calibration,True
+121,41,10,2021-02-01,Replaced worn out parts,True
+122,41,3,2022-05-06,Cleaned machine,True
+123,41,10,2023-06-04,Checked calibration,True
+124,42,6,2021-04-24,Replaced worn out parts,True
+125,42,3,2022-02-17,Checked calibration,False
+126,42,9,2023-07-11,Replaced filters,False
+127,43,10,2021-08-28,Checked calibration,False
+128,43,6,2022-12-15,Replaced filters,True
+129,43,6,2023-08-24,Checked calibration,False
+130,44,3,2021-11-16,Replaced worn out parts,True
+131,44,9,2022-11-10,Checked calibration,True
+132,44,3,2023-03-24,Replaced worn out parts,True
+133,45,5,2021-03-18,Replaced worn out parts,True
+134,45,9,2022-01-12,Replaced worn out parts,True
+135,45,3,2023-12-05,Cleaned machine,True
+136,46,7,2021-09-02,Checked calibration,False
+137,46,3,2022-04-13,Replaced filters,False
+138,46,6,2023-08-04,Lubricated moving components,True
+139,47,5,2021-02-08,Replaced worn out parts,True
+140,47,10,2022-08-13,Replaced worn out parts,True
+141,47,8,2023-08-15,Checked calibration,True
+142,48,7,2021-01-04,Lubricated moving components,True
+143,48,6,2022-05-06,Checked calibration,False
+144,48,10,2023-03-01,Replaced worn out parts,False
+145,49,10,2021-05-20,Replaced filters,True
+146,49,3,2022-01-21,Checked calibration,True
+147,49,9,2023-08-19,Replaced worn out parts,True
+148,50,7,2021-10-25,Lubricated moving components,False
+149,50,3,2022-10-31,Lubricated moving components,False
+150,50,4,2023-09-08,Replaced worn out parts,True

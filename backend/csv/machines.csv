@@ -1,51 +1,51 @@
 id,name,category,group,manufacturer,created_at
-1,AutoMill 200 #1,Manual,Painting,GE Industrial,2019-05-18
-2,SwiftCutter S2 #2,Manual,Welding Bay,Bosch,2019-01-23
-3,AutoMill 200 #3,Manual,Welding Bay,Fanuc,2022-03-07
-4,MegaWeld M5 #4,Manual,Assembly A,GE Industrial,2019-12-10
-5,RoboPress 9 #5,Automatic,Assembly A,Siemens,2018-07-23
-6,HydraDrill H7 #6,Automatic,CNC,Bosch,2020-07-29
-7,CNC Master 3000 #7,Automatic,Press,Mitsubishi,2019-02-17
-8,AutoMill 200 #8,Automatic,Press,Bosch,2022-10-18
-9,SwiftCutter S2 #9,Automatic,Press,Mitsubishi,2021-02-18
-10,AutoMill 200 #10,Automatic,Press,Siemens,2019-11-20
-11,AutoMill 200 #11,Manual,CNC,GE Industrial,2023-04-24
-12,ForgeLine Z1 #12,Manual,Welding Bay,Bosch,2023-03-06
-13,RoboPress 9 #13,Manual,Assembly A,Fanuc,2018-07-16
-14,SwiftCutter S2 #14,Automatic,Painting,Siemens,2022-10-24
-15,ForgeLine Z1 #15,Automatic,Painting,Siemens,2020-10-02
-16,RoboPress 9 #16,Manual,Assembly A,Mitsubishi,2023-02-28
-17,CNC Master 3000 #17,Manual,Painting,Fanuc,2022-10-08
-18,RoboPress 9 #18,Automatic,CNC,Bosch,2019-11-07
-19,ForgeLine Z1 #19,Automatic,CNC,GE Industrial,2019-07-06
-20,SwiftCutter S2 #20,Automatic,CNC,Siemens,2022-05-19
-21,SwiftCutter S2 #21,Manual,Assembly A,Fanuc,2018-08-12
-22,SwiftCutter S2 #22,Automatic,CNC,Mitsubishi,2020-05-09
-23,AutoMill 200 #23,Automatic,Welding Bay,Fanuc,2020-08-29
-24,CNC Master 3000 #24,Automatic,Welding Bay,Siemens,2020-11-06
-25,MegaWeld M5 #25,Automatic,Assembly A,Mitsubishi,2018-10-28
-26,LathePro X #26,Manual,Painting,Fanuc,2018-06-07
-27,ForgeLine Z1 #27,Manual,Press,GE Industrial,2019-12-10
-28,MegaWeld M5 #28,Manual,Press,Siemens,2020-06-28
-29,AutoMill 200 #29,Manual,Painting,Bosch,2021-09-20
-30,RoboPress 9 #30,Manual,Assembly A,Mitsubishi,2018-11-26
-31,LathePro X #31,Manual,Assembly A,Bosch,2022-01-21
-32,SwiftCutter S2 #32,Manual,Press,Fanuc,2021-02-27
-33,CNC Master 3000 #33,Manual,CNC,GE Industrial,2021-05-03
-34,LathePro X #34,Automatic,Painting,Mitsubishi,2022-11-28
-35,SwiftCutter S2 #35,Automatic,Press,Fanuc,2019-04-08
-36,ForgeLine Z1 #36,Manual,Painting,GE Industrial,2020-06-10
-37,MegaWeld M5 #37,Automatic,Press,Bosch,2021-10-30
-38,AutoMill 200 #38,Manual,Painting,Mitsubishi,2019-04-22
-39,ForgeLine Z1 #39,Automatic,Welding Bay,Bosch,2018-11-01
-40,SwiftCutter S2 #40,Automatic,CNC,Mitsubishi,2019-02-12
-41,AutoMill 200 #41,Manual,Press,Bosch,2018-05-15
-42,SwiftCutter S2 #42,Manual,Welding Bay,GE Industrial,2020-09-10
-43,CNC Master 3000 #43,Automatic,Painting,Siemens,2023-03-26
-44,SwiftCutter S2 #44,Manual,Assembly A,Bosch,2019-02-10
-45,ForgeLine Z1 #45,Automatic,Welding Bay,Mitsubishi,2020-02-16
-46,HydraDrill H7 #46,Manual,CNC,Bosch,2021-08-07
-47,HydraDrill H7 #47,Manual,Painting,Siemens,2022-05-01
-48,CNC Master 3000 #48,Manual,Assembly A,GE Industrial,2022-03-17
-49,AutoMill 200 #49,Automatic,Press,Mitsubishi,2022-10-25
-50,CNC Master 3000 #50,Manual,Welding Bay,Bosch,2021-05-21
+1,ForgeLine Z1 #1,Manual,Painting,Siemens,2020-11-20
+2,RoboPress 9 #2,Manual,Painting,Fanuc,2020-08-29
+3,AutoMill 200 #3,Manual,Press,Siemens,2022-12-08
+4,HydraDrill H7 #4,Automatic,Welding Bay,Siemens,2021-01-20
+5,CNC Master 3000 #5,Manual,Welding Bay,Siemens,2022-05-03
+6,CNC Master 3000 #6,Automatic,Press,GE Industrial,2019-02-03
+7,CNC Master 3000 #7,Manual,Welding Bay,GE Industrial,2020-11-15
+8,CNC Master 3000 #8,Manual,Press,Bosch,2022-09-30
+9,AutoMill 200 #9,Manual,Painting,GE Industrial,2018-08-10
+10,RoboPress 9 #10,Automatic,Assembly A,Mitsubishi,2021-11-12
+11,MegaWeld M5 #11,Automatic,CNC,Siemens,2021-03-12
+12,HydraDrill H7 #12,Automatic,Welding Bay,GE Industrial,2020-04-16
+13,RoboPress 9 #13,Automatic,Welding Bay,Bosch,2021-03-30
+14,AutoMill 200 #14,Automatic,Welding Bay,Siemens,2019-11-15
+15,AutoMill 200 #15,Manual,Welding Bay,Bosch,2021-07-11
+16,ForgeLine Z1 #16,Manual,CNC,Siemens,2020-11-29
+17,HydraDrill H7 #17,Automatic,Press,GE Industrial,2018-11-14
+18,LathePro X #18,Manual,Press,GE Industrial,2020-11-16
+19,MegaWeld M5 #19,Automatic,Welding Bay,GE Industrial,2018-12-05
+20,SwiftCutter S2 #20,Manual,Painting,Fanuc,2020-06-19
+21,CNC Master 3000 #21,Manual,CNC,Mitsubishi,2020-06-20
+22,AutoMill 200 #22,Automatic,Press,Fanuc,2022-01-25
+23,LathePro X #23,Automatic,Assembly A,Bosch,2022-08-29
+24,SwiftCutter S2 #24,Automatic,Welding Bay,Fanuc,2018-04-12
+25,AutoMill 200 #25,Automatic,Assembly A,Fanuc,2022-03-30
+26,CNC Master 3000 #26,Manual,Painting,Siemens,2019-03-29
+27,AutoMill 200 #27,Manual,Assembly A,Mitsubishi,2020-06-19
+28,CNC Master 3000 #28,Automatic,Painting,GE Industrial,2018-04-24
+29,HydraDrill H7 #29,Automatic,Assembly A,Fanuc,2022-05-11
+30,RoboPress 9 #30,Automatic,Press,Fanuc,2022-08-02
+31,MegaWeld M5 #31,Automatic,Press,Mitsubishi,2023-01-13
+32,AutoMill 200 #32,Automatic,Welding Bay,Siemens,2020-01-30
+33,CNC Master 3000 #33,Manual,Welding Bay,Bosch,2020-03-31
+34,ForgeLine Z1 #34,Manual,CNC,Bosch,2019-03-07
+35,CNC Master 3000 #35,Manual,CNC,Siemens,2021-03-12
+36,MegaWeld M5 #36,Manual,Welding Bay,Mitsubishi,2022-02-24
+37,RoboPress 9 #37,Manual,Painting,Mitsubishi,2022-11-30
+38,MegaWeld M5 #38,Manual,CNC,Siemens,2019-12-01
+39,AutoMill 200 #39,Manual,Assembly A,GE Industrial,2021-03-17
+40,MegaWeld M5 #40,Manual,Welding Bay,Bosch,2019-04-21
+41,HydraDrill H7 #41,Manual,CNC,Mitsubishi,2019-04-25
+42,SwiftCutter S2 #42,Automatic,Assembly A,Siemens,2019-11-13
+43,MegaWeld M5 #43,Automatic,Press,Siemens,2020-08-09
+44,RoboPress 9 #44,Automatic,Assembly A,Mitsubishi,2021-12-08
+45,ForgeLine Z1 #45,Automatic,Painting,GE Industrial,2021-09-02
+46,RoboPress 9 #46,Automatic,Painting,GE Industrial,2018-05-02
+47,CNC Master 3000 #47,Manual,CNC,Bosch,2021-11-02
+48,AutoMill 200 #48,Automatic,CNC,Bosch,2022-03-28
+49,ForgeLine Z1 #49,Manual,Assembly A,GE Industrial,2019-10-09
+50,MegaWeld M5 #50,Manual,Assembly A,Mitsubishi,2021-01-25

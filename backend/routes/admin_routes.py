@@ -1,7 +1,7 @@
 import os
 import csv
 from flask import Blueprint, jsonify
-from models import db, Machine, Tool, MaintenanceLog, MachineMetric, ToolMetric
+from models import db, Machine, Tool, User, MaintenanceLog, MachineMetric, ToolMetric, ToolAssignment
 from datetime import datetime
 from sqlalchemy.exc import SQLAlchemyError
 
@@ -51,50 +51,60 @@ def import_csv():
                     created_at=parse_date(row['created_at'])
                 )
                 db.session.add(tool)
-                db.session.flush()  
-
+        with open(os.path.join(CSV_DIR, 'tool_metrics.csv')) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
                 metric = ToolMetric(
-                    tool_id=tool.id,
+                    tool_id=int(row['tool_id']),
                     status=row['status'],
                     wear_level=int(row['wear_level']),
                     storage_location=row['storage_location'] if row['status'] == 'in storage' else "N/A"
                 )
                 db.session.add(metric)
-        #print("tools done")
-        # Load maintenance.csv
-        with open(os.path.join(CSV_DIR, 'maintenance.csv')) as f:
+
+        with open(os.path.join(CSV_DIR, 'tool_assignments.csv')) as f:
             reader = csv.DictReader(f)
             for row in reader:
+                assign = ToolAssignment(
+                    machine_id=int(row['machine_id']),
+                    tool_id = int(row['tool_id'])
+                )
+                db.session.add(assign)
+        #print("tools done")
+        # Load users.csv
+        with open(os.path.join(CSV_DIR, 'users.csv')) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                user = User(
+                    username=row['username'],
+                    password_hash=row['password_hash'],
+                    role=row['role'],
+                    created_at=parse_date(row['created_at'])
+                )
+                db.session.add(user)
+        # Load maintenance.csv
+        db.session.flush()
 
-                #because we have no real users with user id's in Sprint 1 we use random names for now
-                tempuser = "Mark"
-                if (row['performed_by'] == "1"):
-                    tempuser = "Olaf"
-                elif (row['performed_by'] == "2"):
-                    tempuser = "John"
-                elif (row['performed_by'] == "3"):
-                    tempuser = "Kate"
-                elif (row['performed_by'] == "4"):
-                    tempuser = "Marie"
-                elif (row['performed_by'] == "5"):
-                    tempuser = "Simon"
-
+        with open(os.path.join(CSV_DIR, 'maintenance_logs.csv')) as f:
+            reader = csv.DictReader(f)
+            for row in reader:
                 log = MaintenanceLog(
                     machine_id=int(row['machine_id']),
-                    performed_by=tempuser, #will be changed later into row['performed_by']
+                    performed_by=int(row['performed_by']),
                     date=parse_date(row['date']),
                     notes=row['notes'],
                     planned=row['planned'].lower() == 'true'
                 )
                 db.session.add(log)
+
         #print("maintenance done")
         # Load dashboard.csv (machine_metrics)
-        with open(os.path.join(CSV_DIR, 'dashboard.csv')) as f:
+        with open(os.path.join(CSV_DIR, 'machine_metrics.csv')) as f:
             reader = csv.DictReader(f)
             for row in reader:
                 metric = MachineMetric(
                     machine_id=int(row['machine_id']),
-                    timestamp=parse_date(row['date']),
+                    timestamp=parse_date(row['timestamp']),
                     oee=float(row['oee']),
                     availability=float(row['availability']),
                     performance=float(row['performance']),
