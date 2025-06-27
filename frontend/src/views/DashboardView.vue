@@ -12,10 +12,10 @@
         <option v-for="d in ranges" :key="d" :value="d">Last {{ labelOf(d) }}</option>
       </select>
 
-      <button @click="importCsv" :disabled="loading">
+      <!-- <button @click="importCsv" :disabled="loading">
         <span v-if="loading">Importing…</span>
         <span v-else>Import CSV</span>
-      </button>
+      </button> -->
     </div>
 
     <div class="kpi-squares">
