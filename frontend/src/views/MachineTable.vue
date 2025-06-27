@@ -3,8 +3,29 @@
     <h2>Machines</h2>
     <button @click="importData">Import</button>
 
-    <div v-if="machines.length === 0" class="no-data">
-      No data available. Please click "Import" to load machines.
+    <div class="filters">
+      <select v-model="selectedStatus">
+        <option value="">All Statuses</option>
+        <option value="Running">Running</option>
+        <option value="Offline">Offline</option>
+      </select>
+
+      <select v-model="selectedCategory">
+        <option value="">All Categories</option>
+        <option value="Manual">Manual</option>
+        <option value="Automatic">Automatic</option>
+      </select>
+
+      <div class="date-range">
+        <label>Created At Period:</label>
+        <input type="date" v-model="startDate" />
+        <span>to</span>
+        <input type="date" v-model="endDate" />
+      </div>
+    </div>
+
+    <div v-if="filteredMachines.length === 0" class="no-data">
+      No matching machines. Try adjusting your filters or import data.
     </div>
 
     <table v-else>
@@ -36,7 +57,7 @@
       </tbody>
     </table>
 
-    <div class="pagination" v-if="machines.length > 0">
+    <div class="pagination" v-if="filteredMachines.length > 0">
       <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
@@ -66,6 +87,11 @@ export default {
     const machineDetailsModal = ref(null);
     const currentPage = ref(1);
     const itemsPerPage = 30;
+
+    const selectedStatus = ref('');
+    const selectedCategory = ref('');
+    const startDate = ref('');
+    const endDate = ref('');
 
     const importData = async () => {
       try {
@@ -107,14 +133,27 @@ export default {
       store.commit('updateMachine', updatedMachine);
     };
 
+    const filteredMachines = computed(() => {
+      return machines.value.filter(machine => {
+        const statusMatch = selectedStatus.value === '' || machine.status === selectedStatus.value;
+        const categoryMatch = selectedCategory.value === '' || machine.category === selectedCategory.value;
+
+        const createdAt = machine.created_at ? new Date(machine.created_at).toISOString().split('T')[0] : null;
+        const startMatch = !startDate.value || (createdAt && createdAt >= startDate.value);
+        const endMatch = !endDate.value || (createdAt && createdAt <= endDate.value);
+
+        return statusMatch && categoryMatch && startMatch && endMatch;
+      });
+    });
+
     const paginatedMachines = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
-      return machines.value.slice(start, end);
+      return filteredMachines.value.slice(start, end);
     });
 
     const totalPages = computed(() => {
-      return Math.ceil(machines.value.length / itemsPerPage);
+      return Math.ceil(filteredMachines.value.length / itemsPerPage);
     });
 
     const previousPage = () => {
@@ -131,6 +170,7 @@ export default {
 
     return {
       machines,
+      filteredMachines,
       paginatedMachines,
       selectedMachine,
       openMachineDetails,
@@ -142,6 +182,10 @@ export default {
       totalPages,
       previousPage,
       nextPage,
+      selectedStatus,
+      selectedCategory,
+      startDate,
+      endDate,
     };
   },
 };
@@ -149,27 +193,52 @@ export default {
 
 <style scoped>
 .machine-list {
-  padding: 20px;
+  padding: 10px 20px 20px 20px;
 }
 
 h2 {
-  margin-bottom: 10px;
-  font-size: 1.5em;
+  margin: 0 0 8px 0; 
   color: #333;
 }
 
 button {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background-color: #007bff;
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  margin-bottom: 10px;
+  margin-bottom: 8px; 
 }
 
 button:hover {
   background-color: #0056b3;
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.filters select,
+.filters input {
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.date-range label {
+  font-weight: 500;
+  white-space: nowrap;
 }
 
 table {
@@ -181,7 +250,7 @@ table {
 
 th,
 td {
-  padding: 12px 15px;
+  padding: 10px 14px;
   text-align: left;
   border-bottom: 1px solid #ddd;
 }
@@ -209,17 +278,18 @@ td {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 20px;
+  margin-top: 15px;
   gap: 10px;
 }
 
 .pagination button {
-  padding: 8px 16px;
+  padding: 6px 14px;
 }
 
 .no-data {
   color: #666;
-  margin-top: 20px;
+  margin-top: 15px;
   font-style: italic;
 }
 </style>
+
