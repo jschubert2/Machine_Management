@@ -19,9 +19,13 @@
             <td>{{ tool.id }}</td>
             <td>{{ tool.name }}</td>
             <td>{{ tool.type }}</td>
-            <td :class="statusClass(tool.metrics?.[0]?.status)"> {{ tool.metrics?.[0]?.status || '-' }} </td>
-            <td :class="wearLevelClass(tool.metrics?.[0]?.wear_level)"> {{ tool.metrics?.[0]?.wear_level ?? '-' }} </td>
-            <td>{{ tool.metrics && tool.metrics[0] ? tool.metrics[0].storage_location : '-' }}</td>
+            <td :class="statusClass(tool.metrics?.[0]?.status)">
+              {{ tool.metrics?.[0]?.status || '-' }}
+            </td>
+            <td :class="wearLevelClass(tool.metrics?.[0]?.wear_level)">
+              {{ tool.metrics?.[0]?.wear_level ?? '-' }}
+            </td>
+            <td>{{ tool.metrics?.[0]?.storage_location || '-' }}</td>
             <td>{{ tool.created_at }}</td>
           </tr>
         </tbody>
@@ -38,6 +42,7 @@
   </div>
 </template>
 
+
 <script>
 export default {
   name: 'ToolTable',
@@ -52,41 +57,76 @@ export default {
       currentPage: 1,
       perPage: 30,
       isLoading: false,
+      filterType: '',
+      filterStatus: '',
+      filterStartDate: '',
+      filterEndDate: '',
+      sortOrder: 'asc',
     };
   },
   computed: {
-    totalPages() {
-      return Math.ceil(this.tools.length / this.perPage);
+    toolTypes() {
+      const types = this.tools.map(t => t.type).filter(Boolean);
+      return [...new Set(types)];
+    },
+    filteredAndSortedTools() {
+      return this.tools
+        .filter(t => {
+          const status = t.metrics?.[0]?.status?.toLowerCase();
+          const typeMatch = this.filterType === '' || t.type === this.filterType;
+          const statusMatch =
+            this.filterStatus === '' ||
+            status === this.filterStatus.toLowerCase() ||
+            (status === 'in storage' && this.filterStatus.toLowerCase() === 'storage');
+
+          const date = new Date(t.created_at);
+          const start = this.filterStartDate ? new Date(this.filterStartDate) : null;
+          const end = this.filterEndDate ? new Date(this.filterEndDate) : null;
+          const dateMatch = (!start || date >= start) && (!end || date <= end);
+
+          return typeMatch && statusMatch && dateMatch;
+        })
+        .sort((a, b) => {
+          const aWear = a.metrics?.[0]?.wear_level ?? 0;
+          const bWear = b.metrics?.[0]?.wear_level ?? 0;
+          return this.sortOrder === 'asc' ? aWear - bWear : bWear - aWear;
+        });
     },
     paginatedTools() {
       const start = (this.currentPage - 1) * this.perPage;
       const end = start + this.perPage;
-      return this.tools.slice(start, end);
+      return this.filteredAndSortedTools.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.filteredAndSortedTools.length / this.perPage);
     },
   },
   methods: {
-  changePage(page) {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-    }
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+      }
+    },
+    toggleSortOrder() {
+      this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
+    },
+    statusClass(status) {
+      switch (status?.toLowerCase()) {
+        case 'attached':
+          return 'status-attached';
+        case 'scrapped':
+          return 'status-scrapped';
+        case 'storage':
+        case 'in storage':
+          return 'status-storage';
+        default:
+          return '';
+      }
+    },
+    wearLevelClass(level) {
+      return typeof level === 'number' && level > 80 ? 'wear-high' : '';
+    },
   },
-  statusClass(status) {
-    switch (status?.toLowerCase()) {
-      case 'attached':
-        return 'status-attached';
-      case 'scrapped':
-        return 'status-scrapped';
-      case 'storage':
-      case 'in storage':
-        return 'status-storage';
-      default:
-        return '';
-    }
-  },
-  wearLevelClass(level) {
-    return typeof level === 'number' && level > 80 ? 'wear-high' : '';
-  }
-}
 };
 </script>
 
@@ -94,49 +134,100 @@ export default {
 .tool-table-container {
   padding: 0 20px 20px 20px;
 }
-.button-group {
+
+.header-row {
   display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
 }
-table {
-  width: 100%;
-  border-collapse: collapse;
+
+.header-row h2 {
+  margin: 0;
+  font-size: 1.4em;
+  color: #333;
 }
-th, td {
-  padding: 10px;
-  border: 1px solid #ddd;
-}
+
 button {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background-color: #007bff;
   color: white;
   border: none;
+  border-radius: 4px;
   cursor: pointer;
+  font-size: 14px;
 }
+
 button:hover {
   background-color: #0056b3;
 }
+
 button:disabled {
   background-color: #cccccc;
   cursor: not-allowed;
 }
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+.filters select,
+.filters input {
+  padding: 6px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.date-range {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 15px;
+}
+
+.date-range input[type="date"] {
+  padding: 5px 10px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 9px 12px;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
 .pagination {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 20px;
+  margin-top: 15px;
   justify-content: center;
 }
+
 .pagination span {
   font-size: 1em;
   color: #333;
 }
+
 .no-data-message {
   text-align: center;
-  padding: 20px;
+  padding: 15px;
   color: #666;
 }
+
 .status-attached {
   color: green;
   font-weight: bold;

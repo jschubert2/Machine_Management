@@ -12,7 +12,6 @@
         <option v-for="d in ranges" :key="d" :value="d">Last {{ labelOf(d) }}</option>
       </select>
 
-
     </div>
 
     <div class="kpi-squares">
@@ -298,47 +297,51 @@ select, button { padding: 8px 12px; font-size: 1em; }
 .kpi-squares {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 15px;
 }
+
 .kpi-square {
   background-color: #fff;
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
+
 .kpi-square h3 {
   margin: 0;
   font-size: 1.1em;
   color: #1a2a44;
 }
+
 .kpi-square p {
   margin: 8px 0 0;
   font-size: 1.8em;
   font-weight: 600;
-  color: #000; 
+  color: #000;
 }
 
 .metrics {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-  margin-bottom: 20px;
+  gap: 15px;
+  margin-bottom: 15px;
 }
+
 .metric {
   background-color: #fff;
   padding: 16px;
   border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0,0,0,.1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   text-align: center;
 }
-.metric h3 { margin: 0; font-size: 1.2em; color: #1a2a44; }
-.metric p { margin: 8px 0 0; font-size: 1.6em; font-weight: 600; color: #007bff; }
 
-.metric-toggle { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 15px; }
-.metric-toggle label { user-select: none; font-size: .9em; }
-.metric-toggle input { margin-right: 4px; }
+.metric h3 {
+  margin: 0;
+  font-size: 1.2em;
+  color: #1a2a44;
+}
 
 .chart-wrapper { position: relative; width: 100%; height: 400px; }
 canvas { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.1); width: 100%; height: 100%; }
