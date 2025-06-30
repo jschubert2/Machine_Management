@@ -1,14 +1,39 @@
 <template>
   <div class="machine-list">
     <h2>Machines</h2>
-    <div v-if="machines.length === 0" class="no-data">
+
+    <div class="filters">
+      <select v-model="selectedStatus">
+        <option value="">All Statuses</option>
+        <option>Running</option>
+        <option>Offline</option>
+      </select>
+
+      <select v-model="selectedCategory">
+        <option value="">All Categories</option>
+        <option>Manual</option>
+        <option>Automatic</option>
+      </select>
+
+      <div class="date-range">
+        <label>Created At:</label>
+        <input type="date" v-model="startDate" />
+        <span>to</span>
+        <input type="date" v-model="endDate" />
+      </div>
+    </div>
+
+    <div v-if="paginatedMachines.length === 0" class="no-data">
       No data available.
     </div>
+
     <table v-else>
       <thead>
         <tr>
           <th>ID</th>
-          <th>Name</th>
+          <th @click="toggleSort('name')">
+            Name {{ sortBy === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
+          </th>
           <th>Group</th>
           <th>Status</th>
           <th>Created At</th>
@@ -32,11 +57,13 @@
         </tr>
       </tbody>
     </table>
-    <div class="pagination" v-if="machines.length > 0">
+
+    <div class="pagination" v-if="paginatedMachines.length > 0">
       <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
+
     <machine-details
       ref="machineDetailsModal"
       :machine="selectedMachine"
@@ -61,6 +88,13 @@ export default {
     const machineDetailsModal = ref(null);
     const currentPage = ref(1);
     const itemsPerPage = 30;
+
+    const selectedStatus = ref('');
+    const selectedCategory = ref('');
+    const startDate = ref('');
+    const endDate = ref('');
+    const sortBy = ref('name');
+    const sortAsc = ref(true);
 
     onMounted(() => {
       store.dispatch('fetchMachines');
@@ -101,32 +135,47 @@ export default {
       });
     });
 
+    const sortedMachines = computed(() => {
+      const sorted = [...filteredMachines.value];
+      sorted.sort((a, b) => {
+        const valA = a[sortBy.value] || '';
+        const valB = b[sortBy.value] || '';
+        return sortAsc.value
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA);
+      });
+      return sorted;
+    });
+
     const paginatedMachines = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
-      return filteredMachines.value.slice(start, end);
+      return sortedMachines.value.slice(start, end);
     });
 
     const totalPages = computed(() => {
-      return Math.ceil(filteredMachines.value.length / itemsPerPage);
+      return Math.ceil(sortedMachines.value.length / itemsPerPage);
     });
 
     const previousPage = () => {
-      if (currentPage.value > 1) {
-        currentPage.value--;
-      }
+      if (currentPage.value > 1) currentPage.value--;
     };
 
     const nextPage = () => {
-      if (currentPage.value < totalPages.value) {
-        currentPage.value++;
+      if (currentPage.value < totalPages.value) currentPage.value++;
+    };
+
+    const toggleSort = (column) => {
+      if (sortBy.value === column) {
+        sortAsc.value = !sortAsc.value;
+      } else {
+        sortBy.value = column;
+        sortAsc.value = true;
       }
     };
 
     return {
       machines,
-      filteredMachines,
-      paginatedMachines,
       selectedMachine,
       openMachineDetails,
       closeMachineDetails,
@@ -140,6 +189,10 @@ export default {
       selectedCategory,
       startDate,
       endDate,
+      sortBy,
+      sortAsc,
+      toggleSort,
+      paginatedMachines
     };
   },
 };
@@ -151,22 +204,8 @@ export default {
 }
 
 h2 {
-  margin: 0 0 8px 0; 
+  margin: 0 0 8px 0;
   color: #333;
-}
-
-button {
-  padding: 8px 16px;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-bottom: 8px; 
-}
-
-button:hover {
-  background-color: #0056b3;
 }
 
 .filters {
@@ -213,6 +252,7 @@ th {
   background-color: #2c3e50;
   color: white;
   font-weight: bold;
+  cursor: pointer;
 }
 
 tr {
@@ -246,4 +286,3 @@ td {
   font-style: italic;
 }
 </style>
-

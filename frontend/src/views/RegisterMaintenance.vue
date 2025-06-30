@@ -162,9 +162,8 @@ input, select, textarea {
   font-size: 1.1em;
   cursor: pointer;
   font-weight: 500;
-  position: absolute;
-  right: 40px;
-  bottom: 40px;
+  align-self: flex-end; 
+  margin-top: 24px;
 }
 .register-btn:hover {
   background: #218838;

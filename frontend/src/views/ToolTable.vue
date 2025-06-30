@@ -2,7 +2,6 @@
   <div class="tool-table-container">
     <div class="header-row">
       <h2>Tool Overview</h2>
-      <button @click="$emit('import-data')" :disabled="isLoading">Import Data</button>
     </div>
 
     <div class="filters">
