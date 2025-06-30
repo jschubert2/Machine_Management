@@ -18,6 +18,16 @@
             Tools
           </router-link>
         </li>
+        <li>
+          <router-link to="/register-maintenance" :class="{ active: $route.name === 'RegisterMaintenance' }">
+            Register Maintenance
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/maintenance-history" :class="{ active: $route.name === 'MaintenanceHistory' }">
+            Maintenance history
+          </router-link>
+        </li>
       </ul>
     </nav>
   </div>

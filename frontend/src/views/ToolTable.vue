@@ -1,9 +1,6 @@
 <template>
   <div class="tool-table-container">
     <h2>Tool Overview</h2>
-    <div class="button-group">
-      <button @click="$emit('import-data')" :disabled="isLoading">Import Data</button>
-    </div>
     <div v-if="tools.length > 0">
       <table>
         <thead>
@@ -36,7 +33,7 @@
       </div>
     </div>
     <div v-else class="no-data-message">
-      <p>No data available. Please click "Import Data" to load tools.</p>
+      <p>No data available.</p>
     </div>
   </div>
 </template>
@@ -95,7 +92,7 @@ export default {
 
 <style scoped>
 .tool-table-container {
-  padding: 20px;
+  padding: 0 20px 20px 20px;
 }
 .button-group {
   display: flex;
@@ -156,5 +153,10 @@ button:disabled {
   color: red;
   font-weight: bold;
 }
-
+h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.5em;
+  color: #333;
+}
 </style>

@@ -12,10 +12,7 @@
         <option v-for="d in ranges" :key="d" :value="d">Last {{ labelOf(d) }}</option>
       </select>
 
-      <button @click="importCsv" :disabled="loading">
-        <span v-if="loading">Importing…</span>
-        <span v-else>Import CSV</span>
-      </button>
+
     </div>
 
     <div class="kpi-squares">
@@ -294,7 +291,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.dashboard { padding: 20px; }
+.dashboard { padding: 0 20px 20px 20px; }
 .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
 select, button { padding: 8px 12px; font-size: 1em; }
 
@@ -345,4 +342,11 @@ select, button { padding: 8px 12px; font-size: 1em; }
 
 .chart-wrapper { position: relative; width: 100%; height: 400px; }
 canvas { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.1); width: 100%; height: 100%; }
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.5em;
+  color: #333;
+}
 </style>

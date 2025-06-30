@@ -1,12 +1,9 @@
 <template>
   <div class="machine-list">
     <h2>Machines</h2>
-    <button @click="importData">Import</button>
-
     <div v-if="machines.length === 0" class="no-data">
-      No data available. Please click "Import" to load machines.
+      No data available.
     </div>
-
     <table v-else>
       <thead>
         <tr>
@@ -35,13 +32,11 @@
         </tr>
       </tbody>
     </table>
-
     <div class="pagination" v-if="machines.length > 0">
       <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
-
     <machine-details
       ref="machineDetailsModal"
       :machine="selectedMachine"
@@ -66,20 +61,6 @@ export default {
     const machineDetailsModal = ref(null);
     const currentPage = ref(1);
     const itemsPerPage = 30;
-
-    const importData = async () => {
-      try {
-        await fetch('http://127.0.0.1:5000/import-csv', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        await store.dispatch('fetchMachines');
-        currentPage.value = 1;
-        console.log('Data imported successfully');
-      } catch (error) {
-        console.error('Error importing data:', error);
-      }
-    };
 
     onMounted(() => {
       store.dispatch('fetchMachines');
@@ -136,7 +117,6 @@ export default {
       openMachineDetails,
       closeMachineDetails,
       updateMachine,
-      importData,
       machineDetailsModal,
       currentPage,
       totalPages,

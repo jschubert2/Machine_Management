@@ -31,8 +31,6 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button class="action-btn" @click="openMaintenanceModal">Register Maintenance</button>
-        <button class="action-btn" @click="openHistoryModal">Maintenance History</button>
         <button class="action-btn" @click="openToolAssignment">Assign Tool</button>
         <button class="close-btn" @click="close">Close</button>
       </div>

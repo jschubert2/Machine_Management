@@ -29,24 +29,30 @@ export default {
     }
   },
   methods: {
-    async handleImportData() {
+    async fetchTools() {
       try {
-        const response = await axios.post('http://127.0.0.1:5000/import-csv')
-        console.log('Import response:', response.data)
-
-        const machinesResponse = await axios.get('http://127.0.0.1:5000/machines', {
-          params: { page: 1, per_page: 50 },
-        })
-        this.machines = machinesResponse.data.machines
-
-        const toolsResponse = await axios.get('http://127.0.0.1:5000/tools', {
+        const response = await axios.get('http://127.0.0.1:5000/tools', {
           params: { page: 1, per_page: 30 },
-        })
-        this.tools = toolsResponse.data.tools || []
+        });
+        this.tools = response.data.tools || [];
       } catch (error) {
-        console.error('Error importing data:', error)
+        console.error('Error fetching tools:', error);
       }
     },
+    async fetchMachines() {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/machines', {
+          params: { page: 1, per_page: 50 },
+        });
+        this.machines = response.data.machines || [];
+      } catch (error) {
+        console.error('Error fetching machines:', error);
+      }
+    },
+  },
+  mounted() {
+    this.fetchMachines();
+    this.fetchTools();
   },
 }
 </script>
