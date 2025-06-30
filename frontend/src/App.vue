@@ -40,20 +40,37 @@ export default {
   methods: {
     async handleImportData() {
       try {
-        const response = await axios.post('http://127.0.0.1:5000/import-csv')
-        const machinesResponse = await axios.get('http://127.0.0.1:5000/machines', {
-          params: { page: 1, per_page: 50 },
-        })
-        this.machines = machinesResponse.data.machines
-
-        const toolsResponse = await axios.get('http://127.0.0.1:5000/tools', {
-          params: { page: 1, per_page: 30 },
-        })
-        this.tools = toolsResponse.data.tools || []
+        await axios.post('http://127.0.0.1:5000/import-csv')
+        await this.fetchMachines()
+        await this.fetchTools()
       } catch (error) {
-        console.error('Error importing data:', error)
+        console.error('Import error:', error)
       }
     },
+    async fetchMachines() {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/machines', {
+          params: { page: 1, per_page: 50 },
+        });
+        this.machines = response.data.machines || [];
+      } catch (error) {
+        console.error('Error fetching machines:', error);
+      }
+    },
+    async fetchTools() {
+      try {
+        const response = await axios.get('http://127.0.0.1:5000/tools', {
+          params: { page: 1, per_page: 30 },
+        });
+        this.tools = response.data.tools || [];
+      } catch (error) {
+        console.error('Error fetching tools:', error);
+      }
+    }
+  },
+  mounted() {
+    this.fetchMachines();
+    this.fetchTools();
   }
 }
 </script>

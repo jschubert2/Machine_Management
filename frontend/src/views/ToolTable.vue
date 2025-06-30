@@ -66,11 +66,10 @@
       </div>
     </div>
     <div v-else class="no-data-message">
-      <p>No tools match the current filters.</p>
+      <p>No data available.</p>
     </div>
   </div>
 </template>
-
 
 <script>
 export default {
@@ -123,8 +122,7 @@ export default {
     },
     paginatedTools() {
       const start = (this.currentPage - 1) * this.perPage;
-      const end = start + this.perPage;
-      return this.filteredAndSortedTools.slice(start, end);
+      return this.filteredAndSortedTools.slice(start, start + this.perPage);
     },
     totalPages() {
       return Math.ceil(this.filteredAndSortedTools.length / this.perPage);
@@ -141,15 +139,11 @@ export default {
     },
     statusClass(status) {
       switch (status?.toLowerCase()) {
-        case 'attached':
-          return 'status-attached';
-        case 'scrapped':
-          return 'status-scrapped';
+        case 'attached': return 'status-attached';
+        case 'scrapped': return 'status-scrapped';
         case 'storage':
-        case 'in storage':
-          return 'status-storage';
-        default:
-          return '';
+        case 'in storage': return 'status-storage';
+        default: return '';
       }
     },
     wearLevelClass(level) {
@@ -161,7 +155,7 @@ export default {
 
 <style scoped>
 .tool-table-container {
-  padding: 10px 20px 20px 20px;
+  padding: 0 20px 20px 20px;
 }
 
 .header-row {
@@ -257,20 +251,15 @@ th, td {
   color: #666;
 }
 
-.status-attached {
-  color: green;
-  font-weight: bold;
-}
-.status-scrapped {
-  color: red;
-  font-weight: bold;
-}
-.status-storage {
-  color: orange;
-  font-weight: bold;
-}
-.wear-high {
-  color: red;
-  font-weight: bold;
+.status-attached { color: green; font-weight: bold; }
+.status-scrapped { color: red; font-weight: bold; }
+.status-storage { color: orange; font-weight: bold; }
+.wear-high { color: red; font-weight: bold; }
+
+h2 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-size: 1.5em;
+  color: #333;
 }
 </style>

@@ -1,33 +1,9 @@
 <template>
   <div class="machine-list">
     <h2>Machines</h2>
-    <button @click="importData">Import</button>
-
-    <div class="filters">
-      <select v-model="selectedStatus">
-        <option value="">All Statuses</option>
-        <option value="Running">Running</option>
-        <option value="Offline">Offline</option>
-      </select>
-
-      <select v-model="selectedCategory">
-        <option value="">All Categories</option>
-        <option value="Manual">Manual</option>
-        <option value="Automatic">Automatic</option>
-      </select>
-
-      <div class="date-range">
-        <label>Created At Period:</label>
-        <input type="date" v-model="startDate" />
-        <span>to</span>
-        <input type="date" v-model="endDate" />
-      </div>
+    <div v-if="machines.length === 0" class="no-data">
+      No data available.
     </div>
-
-    <div v-if="filteredMachines.length === 0" class="no-data">
-      No matching machines. Try adjusting your filters or import data.
-    </div>
-
     <table v-else>
       <thead>
         <tr>
@@ -56,13 +32,11 @@
         </tr>
       </tbody>
     </table>
-
-    <div class="pagination" v-if="filteredMachines.length > 0">
+    <div class="pagination" v-if="machines.length > 0">
       <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
       <span>Page {{ currentPage }} of {{ totalPages }}</span>
       <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
     </div>
-
     <machine-details
       ref="machineDetailsModal"
       :machine="selectedMachine"
@@ -87,25 +61,6 @@ export default {
     const machineDetailsModal = ref(null);
     const currentPage = ref(1);
     const itemsPerPage = 30;
-
-    const selectedStatus = ref('');
-    const selectedCategory = ref('');
-    const startDate = ref('');
-    const endDate = ref('');
-
-    const importData = async () => {
-      try {
-        await fetch('http://127.0.0.1:5000/import-csv', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-        });
-        await store.dispatch('fetchMachines');
-        currentPage.value = 1;
-        console.log('Data imported successfully');
-      } catch (error) {
-        console.error('Error importing data:', error);
-      }
-    };
 
     onMounted(() => {
       store.dispatch('fetchMachines');
@@ -176,7 +131,6 @@ export default {
       openMachineDetails,
       closeMachineDetails,
       updateMachine,
-      importData,
       machineDetailsModal,
       currentPage,
       totalPages,
