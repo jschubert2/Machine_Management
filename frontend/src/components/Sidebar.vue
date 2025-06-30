@@ -20,10 +20,16 @@
         </li>
       </ul>
     </nav>
+
+    <button class="logout-button" @click="logout">
+      Logout
+    </button>
   </div>
 </template>
 
 <script>
+import keycloak from '../keycloak'
+
 export default {
   name: 'Sidebar',
   props: {
@@ -32,7 +38,14 @@ export default {
       default: true,
     },
   },
-};
+  methods: {
+    logout() {
+      keycloak.logout({
+        redirectUri: window.location.origin
+      })
+    }
+  }
+}
 </script>
 
 <style scoped>
@@ -89,5 +102,22 @@ a:hover {
 a.active {
   background-color: #e0e7ff;
   color: #1a2a44;
+}
+
+.logout-button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  font-size: 1em;
+  background-color: #3c4caf;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.logout-button:hover {
+  background-color: #c0392b;
 }
 </style>

@@ -1,11 +1,15 @@
 <template>
   <div class="app">
-    
-    <button class="open-btn" @click="isSidebarVisible = true">☰</button>
+    <Sidebar v-if="!isLoginPage" :isVisible="isSidebarVisible" @close="isSidebarVisible = false" />
+    <button
+      v-if="!isLoginPage"
+      class="open-btn"
+      @click="isSidebarVisible = true"
+    >
+      ☰
+    </button>
 
-    <Sidebar :isVisible="isSidebarVisible" @close="isSidebarVisible = false" />
-
-    <div class="content" :class="{ 'content-shifted': isSidebarVisible }">
+    <div class="content" :class="{ 'content-shifted': isSidebarVisible && !isLoginPage }">
       <router-view
         :machines="machines"
         :tools="tools"
@@ -28,12 +32,15 @@ export default {
       tools: [],
     }
   },
+  computed: {
+    isLoginPage() {
+      return this.$route.name === 'Login'
+    }
+  },
   methods: {
     async handleImportData() {
       try {
         const response = await axios.post('http://127.0.0.1:5000/import-csv')
-        console.log('Import response:', response.data)
-
         const machinesResponse = await axios.get('http://127.0.0.1:5000/machines', {
           params: { page: 1, per_page: 50 },
         })
@@ -47,7 +54,7 @@ export default {
         console.error('Error importing data:', error)
       }
     },
-  },
+  }
 }
 </script>
 

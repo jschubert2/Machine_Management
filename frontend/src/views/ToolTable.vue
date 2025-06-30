@@ -5,7 +5,6 @@
       <button @click="$emit('import-data')" :disabled="isLoading">Import Data</button>
     </div>
 
-    <!-- Filters -->
     <div class="filters">
       <select v-model="filterType">
         <option value="">All Types</option>
