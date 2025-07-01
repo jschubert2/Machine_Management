@@ -16,6 +16,13 @@ MAINTENANCE_YEARS = [2021, 2022, 2023]
 
 # Fonctions utilitaires
 def random_date(start: date, end: date) -> date:
+    """
+    Generates a random date between two given dates.
+
+    @param start Lower bound for the generated date (inclusive)
+    @param end Upper bound for the generated date (inclusive)
+    @return A random date between start and end
+    """
     delta = end - start
     return start + timedelta(days=random.randint(0, delta.days))
 
@@ -38,6 +45,9 @@ first_names = ["Alice", "Bob", "Claire", "Daniel", "Eva", "Frank", "Grace", "Hug
 last_names = ["Martin", "Durand", "Lemoine", "Bernard", "Petit", "Robert", "Moreau", "Fournier", "Garcia", "Leroy"]
 
 # --- machines.csv ---
+# Creates a list of industrial machines with realistic metadata (name, type, group, etc.)
+# WHY: Simulates a machine registry for an industrial workshop or factory
+
 machines = []
 for mid in range(1, NUM_MACHINES+1):
     machines.append({
@@ -54,7 +64,13 @@ with open('csv/machines.csv', 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(machines)
 
-# --- users.csv (réalistes) ---
+# --- users.csv ---
+# Generates admin and technician users with unique usernames and hashed passwords
+# WHY: Mimics a realistic user system with authentication and roles
+
+# WHY (username logic): Prevents duplicate usernames by adding a numeric suffix when needed
+# WHY (password hashing): Simulates secure user credentials without storing plaintext passwords
+
 users = []
 used_usernames = set()
 for uid in range(1, NUM_USERS + 1):
@@ -87,6 +103,9 @@ with open('csv/users.csv', 'w', newline='') as f:
     writer.writerows(users)
 
 # --- tools.csv ---
+# Builds a catalog of tools with type and model identifiers
+# WHY: Represents the available tooling inventory in a factory setting
+
 tools = []
 for tid in range(1, NUM_TOOLS+1):
     tools.append({
@@ -102,6 +121,11 @@ with open('csv/tools.csv', 'w', newline='') as f:
     writer.writerows(tools)
 
 # --- tool_metrics.csv ---
+# Assigns a wear level and storage status to each tool
+# WHY: Used to track physical condition and availability of tools for maintenance or operational planning
+
+# WHY (storage_location condition): Only tools marked as 'in storage' are assigned a storage rack
+
 tool_metrics = []
 for t in tools:
     status = random.choice(tool_statuses)
@@ -119,6 +143,9 @@ with open('csv/tool_metrics.csv', 'w', newline='') as f:
     writer.writerows(tool_metrics)
 
 # --- tool_assignments.csv ---
+# Links tools to machines in a round-robin pattern
+# WHY: Ensures each tool is assigned to a machine for simulation purposes
+
 assignments = []
 machine_count = len(machines)
 for idx, t in enumerate(tools, start=1):
@@ -133,6 +160,12 @@ with open('csv/tool_assignments.csv', 'w', newline='') as f:
     writer.writerows(assignments)
 
 # --- machine_metrics.csv ---
+# Logs daily performance data (OEE, availability, etc.) for each machine over several months
+# WHY: Simulates dashboard data that can be visualized in an industrial monitoring system
+
+# WHY (looping logic): Iterates day-by-day and generates multiple metrics per machine per day
+# WHY (randomized KPIs): Mimics real-world fluctuations in machine performance
+
 machine_metrics = []
 mm_id = 1
 today = datetime.now().date()
@@ -159,6 +192,11 @@ with open('csv/machine_metrics.csv', 'w', newline='') as f:
     writer.writerows(machine_metrics)
 
 # --- maintenance_logs.csv ---
+# Creates annual maintenance records for all machines, performed by technicians
+# WHY: Reflects historical maintenance activity, including whether it was planned or reactive
+
+# WHY (random technician): Randomly assigns a valid technician ID for each maintenance log
+
 maintenance = []
 maint_id = 1
 notes_choices = [
@@ -187,4 +225,5 @@ with open('csv/maintenance_logs.csv', 'w', newline='') as f:
     writer.writeheader()
     writer.writerows(maintenance)
 
-print("✅ Tous les fichiers CSV ont été générés avec des données crédibles dans le dossier /csv.")
+print("✅ All CSV files with realistic demo data have been generated in the /csv directory.")
+# WHY: Gives the user a clear confirmation that the script completed successfully
