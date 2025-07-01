@@ -18,7 +18,8 @@
             Tools
           </router-link>
         </li>
-        <li>
+        <!-- Только для Technician -->
+        <li v-if="isTechnician">
           <router-link to="/register-maintenance" :class="{ active: $route.name === 'RegisterMaintenance' }">
             Register Maintenance
           </router-link>
@@ -48,11 +49,16 @@ export default {
       default: true,
     },
   },
+  computed: {
+    isTechnician() {
+      return keycloak.tokenParsed?.realm_access?.roles?.includes('Technician');
+    }
+  },
   methods: {
     logout() {
       keycloak.logout({
         redirectUri: window.location.origin
-      })
+      });
     }
   }
 }

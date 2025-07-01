@@ -11,14 +11,17 @@
           </option>
         </select>
       </div>
+
       <div class="form-row">
         <label>Performed By</label>
-        <input v-model="performedBy" type="text" required />
+        <input :value="fullName" type="text" readonly />
       </div>
+
       <div class="form-row">
         <label>Date</label>
         <input v-model="date" type="date" required />
       </div>
+
       <div class="form-row">
         <label>Maintenance Type</label>
         <div class="maintenance-type">
@@ -26,13 +29,16 @@
           <label><input type="radio" value="planned" v-model="maintenanceType" required /> Planned</label>
         </div>
       </div>
+
       <div class="form-row">
         <label>Notes</label>
         <textarea v-model="notes" rows="3" />
       </div>
+
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </form>
+
     <button class="register-btn" @click="submitForm">Register</button>
   </div>
 </template>
@@ -46,10 +52,11 @@ export default {
     return {
       machines: [],
       selectedMachineId: '',
-      performedBy: '',
       date: '',
       maintenanceType: '',
       notes: '',
+      userId: null,
+      fullName: 'Unknown User',
       successMessage: '',
       errorMessage: '',
     };
@@ -57,39 +64,74 @@ export default {
   methods: {
     async fetchMachines() {
       try {
-        const res = await axios.get('http://127.0.0.1:5000/machines', { params: { page: 1, per_page: 100 } });
+        const res = await axios.get('http://127.0.0.1:5000/machines', {
+          params: { page: 1, per_page: 100 },
+        });
         this.machines = res.data.machines || [];
       } catch (e) {
         this.errorMessage = 'Failed to load machines.';
       }
     },
+    async fetchUserIdFromBackend(username) {
+      try {
+        const res = await axios.get('http://127.0.0.1:5000/users', {
+          params: { page: 1, per_page: 100 }
+        });
+        
+        console.log('Users from backend:', res.data.users);
+        const match = res.data.users.find((u) => u.username === username);
+        if (match) {
+          this.userId = match.id;
+          console.log('User ID matched:', this.userId);
+        } else {
+          console.warn(`User "${username}" not found`);
+          this.errorMessage = `User "${username}" not found in backend.`;
+        }
+      } catch (e) {
+        console.error('Failed to fetch users:', e);
+        this.errorMessage = 'Failed to fetch users from backend.';
+      }
+    },
+
     async registerMaintenance() {
       this.successMessage = '';
       this.errorMessage = '';
+
+      if (!this.userId) {
+        this.errorMessage = 'Cannot register maintenance: user ID not resolved.';
+        return;
+      }
+
       try {
         await axios.post('http://127.0.0.1:5000/maintenance', {
           machine_id: this.selectedMachineId,
-          performed_by: this.performedBy,
+          performed_by: this.userId,
           date: this.date,
           notes: this.notes,
           planned: this.maintenanceType === 'planned',
         });
         this.successMessage = 'Maintenance registered successfully!';
         this.selectedMachineId = '';
-        this.performedBy = '';
         this.date = '';
         this.maintenanceType = '';
         this.notes = '';
       } catch (e) {
+        console.error('Registration error:', e);
         this.errorMessage = 'Failed to register maintenance.';
       }
     },
     submitForm() {
       this.$refs.regForm.requestSubmit();
-    }
+    },
   },
-  mounted() {
-    this.fetchMachines();
+  async mounted() {
+    const token = this.$keycloak?.tokenParsed;
+    if (token) {
+      this.fullName = `${token.given_name} ${token.family_name}`;
+      const username = token.preferred_username;
+      await this.fetchUserIdFromBackend(username);
+    }
+    await this.fetchMachines();
   },
 };
 </script>
@@ -144,6 +186,11 @@ input, select, textarea {
   width: 100%;
   box-sizing: border-box;
 }
+input[readonly] {
+  background-color: #f4f4f4;
+  color: #555;
+  cursor: not-allowed;
+}
 .maintenance-type {
   display: flex;
   gap: 40px;
@@ -162,7 +209,7 @@ input, select, textarea {
   font-size: 1.1em;
   cursor: pointer;
   font-weight: 500;
-  align-self: flex-end; 
+  align-self: flex-end;
   margin-top: 24px;
 }
 .register-btn:hover {
@@ -178,4 +225,4 @@ input, select, textarea {
   font-weight: 500;
   margin-top: 20px;
 }
-</style> 
+</style>
