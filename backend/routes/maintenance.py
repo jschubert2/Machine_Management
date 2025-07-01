@@ -6,6 +6,49 @@ bp = Blueprint('maintenance', __name__)
 
 @bp.route('/machines/<int:machine_id>/maintenance', methods=['GET'])
 def get_machine_maintenance(machine_id):
+    """
+    Get maintenance logs for a specific machine
+    ---
+    parameters:
+      - name: machine_id
+        in: path
+        type: integer
+        required: true
+        description: ID of the machine
+    responses:
+      200:
+        description: A list of maintenance logs for the given machine
+        schema:
+          type: object
+          properties:
+            machine_id:
+              type: integer
+              example: 5
+            maintenance_logs:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                    example: 12
+                  machine_id:
+                    type: integer
+                    example: 5
+                  performed_by:
+                    type: string
+                    example: "Technician A"
+                  date:
+                    type: string
+                    format: date
+                    example: "2024-06-20"
+                  notes:
+                    type: string
+                    example: "Replaced belt and lubricated motor"
+                  planned:
+                    type: boolean
+                    example: false
+    """
     logs = MaintenanceLog.query.filter_by(machine_id=machine_id).order_by(MaintenanceLog.date.asc()).all()
 
     data = [
@@ -25,8 +68,69 @@ def get_machine_maintenance(machine_id):
         "maintenance_logs": data
     })
 
+
 @bp.route('/maintenance', methods=['POST'])
 def add_maintenance():
+    """
+    Add a new maintenance log
+    ---
+    consumes:
+      - application/json
+    parameters:
+      - in: body
+        name: maintenance
+        required: true
+        schema:
+          type: object
+          required:
+            - machine_id
+            - performed_by
+            - notes
+            - date
+            - planned
+          properties:
+            machine_id:
+              type: integer
+              example: 5
+            performed_by:
+              type: string
+              example: "Technician A"
+            notes:
+              type: string
+              example: "Routine inspection and oiling"
+            date:
+              type: string
+              format: date-time
+              example: "2024-06-22T10:00:00"
+            planned:
+              type: boolean
+              example: true
+    responses:
+      201:
+        description: Maintenance log added successfully
+        schema:
+          type: object
+          properties:
+            message:
+              type: string
+              example: "Maintenance log added successfully!"
+      400:
+        description: Missing or invalid input
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Missing field: machine_id"
+      500:
+        description: Server error
+        schema:
+          type: object
+          properties:
+            error:
+              type: string
+              example: "Internal server error"
+    """
     data = request.get_json()
 
     # basic input validation
