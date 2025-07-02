@@ -1,7 +1,6 @@
 from flask import Blueprint, request, jsonify
 from datetime import datetime
-from models import db, MaintenanceLog
-
+from models import db, MaintenanceLog, User
 bp = Blueprint('maintenance', __name__)
 
 @bp.route('/machines/<int:machine_id>/maintenance', methods=['GET'])
@@ -55,7 +54,7 @@ def get_machine_maintenance(machine_id):
         {
             "id": log.id,
             "machine_id": log.machine_id,
-            "performed_by": log.performed_by,
+            "performed_by": f"{log.performer.firstname} {log.performer.lastname}",
             "date": log.date.strftime('%Y-%m-%d'),
             "notes": log.notes,
             "planned": log.planned
@@ -141,10 +140,13 @@ def add_maintenance():
 
     try:
         planned = str(data['planned']).lower() == 'true'  # Convert to bool
+        user = User.query.filter_by(username=data['performed_by']).first()
+        if not user:
+            return jsonify({"error": "User not found"}), 404
 
         maintenance = MaintenanceLog(
             machine_id=data['machine_id'],
-            performed_by=data['performed_by'],
+            performed_by=user.id,
             notes=data['notes'],
             date=datetime.fromisoformat(data['date']),
             planned=planned

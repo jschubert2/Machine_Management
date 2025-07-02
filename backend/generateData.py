@@ -85,15 +85,11 @@ for uid in range(1, NUM_USERS + 1):
         username = f"{username_base}{suffix}"
     used_usernames.add(username)
 
-    role = "Admin" if uid <= 2 else "Technician"
-    raw_pwd = f"{fname}{lname}{random.randint(100,999)}"
-    password_hash = hashlib.sha256(raw_pwd.encode()).hexdigest()
-
     users.append({
         "id": uid,
         "username": username,
-        "password_hash": password_hash,
-        "role": role,
+        "firstname": fname,
+        "lastname": lname,
         "created_at": random_date(start_date, end_date).isoformat()
     })
 
@@ -206,7 +202,7 @@ notes_choices = [
     "Replaced filters",
     "Cleaned machine"
 ]
-technician_ids = [u["id"] for u in users if u["role"] == "Technician"]
+technician_ids = [u["id"] for u in users]
 
 for m in machines:
     for year in MAINTENANCE_YEARS:

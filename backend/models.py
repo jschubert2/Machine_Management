@@ -26,8 +26,8 @@ class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(255), nullable=False, unique=True)
-    password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(50), nullable=False)
+    firstname = db.Column(db.String(100), nullable=False)
+    lastname = db.Column(db.String(100), nullable=False)
     created_at = db.Column(db.DateTime, nullable=False) #default=datetime.now()
 
 class ToolMetric(db.Model):
@@ -69,6 +69,7 @@ class MaintenanceLog(db.Model):
     date = db.Column(db.DateTime, nullable=False) #default=datetime.now()
     notes = db.Column(db.Text)
     planned = db.Column(db.Boolean, nullable=False)
+    performer = db.relationship('User', backref='maintenance_logs')
 
 class MachineMetric(db.Model):
     """

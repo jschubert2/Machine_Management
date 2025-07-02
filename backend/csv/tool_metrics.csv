@@ -1,31 +1,31 @@
 id,tool_id,status,storage_location,wear_level
-1,1,attached,,32
-2,2,in storage,Rack B2,82
-3,3,scrapped,,52
-4,4,scrapped,,42
-5,5,scrapped,,10
-6,6,scrapped,,82
-7,7,scrapped,,62
-8,8,attached,,72
-9,9,in storage,Cabinet E5,30
-10,10,in storage,Rack D4,53
-11,11,scrapped,,89
-12,12,in storage,Cabinet E5,54
-13,13,scrapped,,82
-14,14,scrapped,,93
-15,15,scrapped,,79
-16,16,scrapped,,25
-17,17,attached,,95
-18,18,in storage,Rack D4,15
-19,19,scrapped,,81
-20,20,in storage,Rack D4,32
-21,21,scrapped,,17
-22,22,scrapped,,50
-23,23,scrapped,,49
-24,24,attached,,39
-25,25,in storage,Rack B2,72
-26,26,scrapped,,67
-27,27,attached,,64
-28,28,scrapped,,74
-29,29,in storage,Rack B2,80
-30,30,in storage,Shelf A1,79
+1,1,attached,,22
+2,2,scrapped,,12
+3,3,attached,,26
+4,4,attached,,73
+5,5,scrapped,,70
+6,6,attached,,78
+7,7,attached,,55
+8,8,in storage,Rack D4,33
+9,9,in storage,Cabinet E5,73
+10,10,in storage,Cabinet E5,31
+11,11,scrapped,,93
+12,12,in storage,Rack B2,70
+13,13,scrapped,,93
+14,14,in storage,Rack D4,4
+15,15,attached,,83
+16,16,in storage,Rack B2,65
+17,17,attached,,25
+18,18,scrapped,,27
+19,19,scrapped,,66
+20,20,in storage,Cabinet E5,54
+21,21,in storage,Shelf C3,60
+22,22,scrapped,,89
+23,23,in storage,Rack D4,51
+24,24,scrapped,,5
+25,25,scrapped,,93
+26,26,scrapped,,80
+27,27,scrapped,,38
+28,28,scrapped,,8
+29,29,in storage,Shelf C3,64
+30,30,in storage,Shelf A1,75

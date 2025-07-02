@@ -32,13 +32,14 @@ def get_users():
     data = [{
         "id": user.id,
         "username": user.username,
-        "role": user.role,
-        "created_at": user.created_at.isoformat()
+        "firstname": user.firstname,
+        "lastname": user.lastname,
+        "created_at": user.created_at.strftime('%Y-%m-%d')
     } for user in users]
 
     return jsonify(data)
 
-@bp.route('/users', methods=['POST'])
+@bp.route('/user', methods=['POST'])
 def register_user():
     """
     Register a new user
@@ -91,25 +92,18 @@ def register_user():
               example: "Username already exists."
     """
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    role = data.get('role', 'technician')  # default role
+    try:
+        user = User(
+            username=data['username'],
+            firstname=data['first_name'],
+            lastname=data['last_name'],
+            created_at=datetime.utcnow().strftime("%Y-%m-%d")
+        )
 
-    print(f"\n\n\n\t\t\tReceived data: {data}\n\n\n")
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({"message": "New user added successfully!"}), 201
 
-    if not username or not password:
-        return {"error": "Username and password are required."}, 400
-
-    if User.query.filter_by(username=username).first():
-        return {"error": "Username already exists."}, 409
-
-    new_user = User(
-        username=username,
-        password_hash=generate_password_hash(password),
-        role=role,
-        created_at=datetime.now()
-    )
-
-    db.session.add(new_user)
-    db.session.commit()
-    return {"message": "User registered successfully!"}, 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

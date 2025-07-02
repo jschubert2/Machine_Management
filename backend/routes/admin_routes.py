@@ -77,8 +77,8 @@ def import_csv():
             for row in reader:
                 user = User(
                     username=row['username'],
-                    password_hash=row['password_hash'],
-                    role=row['role'],
+                    firstname=row['firstname'],
+                    lastname=row['lastname'],
                     created_at=parse_date(row['created_at'])
                 )
                 db.session.add(user)
