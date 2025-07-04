@@ -1,6 +1,11 @@
 <template>
   <div class="app">
-    <Sidebar v-if="!isLoginPage" :isVisible="isSidebarVisible" @close="isSidebarVisible = false" />
+    <Sidebar
+      v-if="!isLoginPage"
+      :isVisible="isSidebarVisible"
+      :userFullName="userFullName"
+      @close="isSidebarVisible = false"
+    />
     <button
       v-if="!isLoginPage"
       class="open-btn"
@@ -30,6 +35,7 @@ export default {
       isSidebarVisible: true,
       machines: [],
       tools: [],
+      userFullName: '',
     }
   },
   computed: {
@@ -66,9 +72,48 @@ export default {
       } catch (error) {
         console.error('Error fetching tools:', error);
       }
+    },
+
+    async ensureUserExists() {
+      const token = this.$keycloak?.tokenParsed;
+      if (!token) return;
+
+      const username = token.preferred_username;
+      const first_name = token.given_name;
+      const last_name = token.family_name;
+      this.userFullName = `${first_name} ${last_name}`;
+      console.log(`token username ${username}`);
+
+      try {
+        // 1. Получить всех пользователей
+        const res = await axios.get('http://127.0.0.1:5000/users');
+        const exists = res.data?.some(u => u.username === username);
+        console.log(`exists ${exists}`);
+
+        if (exists) {
+          console.log(`ℹ️ User already exists: ${username}`);
+          return;
+        }
+
+        // 2. Добавить, если не найден
+        await axios.post('http://127.0.0.1:5000/user', {
+          username,
+          first_name: first_name,
+          last_name: last_name
+        }, {
+          headers: {
+            Authorization: `Bearer ${this.$keycloak.token}`
+          }
+        });
+
+        console.log(`✅ Created new user: ${username}`);
+      } catch (err) {
+        console.error('❌ Failed to ensure user exists:', err);
+      }
     }
   },
   mounted() {
+    this.ensureUserExists();
     this.fetchMachines();
     this.fetchTools();
   }

@@ -55,7 +55,6 @@ export default {
       date: '',
       maintenanceType: '',
       notes: '',
-      userId: null,
       fullName: 'Unknown User',
       successMessage: '',
       errorMessage: '',
@@ -72,40 +71,22 @@ export default {
         this.errorMessage = 'Failed to load machines.';
       }
     },
-    async fetchUserIdFromBackend(username) {
-      try {
-        const res = await axios.get('http://127.0.0.1:5000/users', {
-          params: { page: 1, per_page: 100 }
-        });
-        
-        console.log('Users from backend:', res.data.users);
-        const match = res.data.users.find((u) => u.username === username);
-        if (match) {
-          this.userId = match.id;
-          console.log('User ID matched:', this.userId);
-        } else {
-          console.warn(`User "${username}" not found`);
-          this.errorMessage = `User "${username}" not found in backend.`;
-        }
-      } catch (e) {
-        console.error('Failed to fetch users:', e);
-        this.errorMessage = 'Failed to fetch users from backend.';
-      }
-    },
-
     async registerMaintenance() {
       this.successMessage = '';
       this.errorMessage = '';
 
-      if (!this.userId) {
-        this.errorMessage = 'Cannot register maintenance: user ID not resolved.';
+      const token = this.$keycloak?.tokenParsed;
+      const username = token?.preferred_username;
+
+      if (!username) {
+        this.errorMessage = 'Cannot register maintenance: username not found.';
         return;
       }
 
       try {
         await axios.post('http://127.0.0.1:5000/maintenance', {
           machine_id: this.selectedMachineId,
-          performed_by: this.userId,
+          performed_by: username, // 👈 отправляем username
           date: this.date,
           notes: this.notes,
           planned: this.maintenanceType === 'planned',
@@ -128,8 +109,6 @@ export default {
     const token = this.$keycloak?.tokenParsed;
     if (token) {
       this.fullName = `${token.given_name} ${token.family_name}`;
-      const username = token.preferred_username;
-      await this.fetchUserIdFromBackend(username);
     }
     await this.fetchMachines();
   },

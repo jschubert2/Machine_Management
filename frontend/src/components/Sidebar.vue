@@ -1,6 +1,12 @@
 <template>
   <div class="sidebar" :class="{ hidden: !isVisible }">
     <button class="close-btn" @click="$emit('close')">✖</button>
+
+    <!-- 👤 Показываем имя пользователя -->
+    <div class="user-info" v-if="userFullName">
+      👤 {{ userFullName }}
+    </div>
+
     <nav>
       <ul>
         <li>
@@ -48,6 +54,10 @@ export default {
       type: Boolean,
       default: true,
     },
+    userFullName: {
+      type: String,
+      default: ''
+    }
   },
   computed: {
     isTechnician() {
@@ -91,6 +101,14 @@ export default {
   color: white;
   font-size: 1.5rem;
   cursor: pointer;
+}
+
+.user-info {
+  font-size: 1.05em;
+  color: #f0f0f0;
+  padding: 10px 0;
+  border-bottom: 1px solid #ffffff22;
+  margin-bottom: 10px;
 }
 
 ul {
