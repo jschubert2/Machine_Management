@@ -3,18 +3,22 @@
     <h2>Machines</h2>
 
     <div class="filters">
+      <template v-if="isAdmin">
+        <label class="import-label">
+          <input type="file" accept=".csv" @change="importCsv" style="display:none" ref="importInput" />
+          <button class="import-btn" @click.prevent="$refs.importInput.click()">import CSV</button>
+        </label>
+      </template>
       <select v-model="selectedStatus">
         <option value="">All Statuses</option>
         <option>Running</option>
         <option>Offline</option>
       </select>
-
       <select v-model="selectedCategory">
         <option value="">All Categories</option>
         <option>Manual</option>
         <option>Automatic</option>
       </select>
-
       <div class="date-range">
         <label>Created At:</label>
         <input type="date" v-model="startDate" />
@@ -23,45 +27,47 @@
       </div>
     </div>
 
-    <div v-if="paginatedMachines.length === 0" class="no-data">
-      No data available.
-    </div>
+    <div v-if="isAdmin && !machinesLoaded" class="no-data">upload CSV file to display machines</div>
+    <div v-else>
+      <div v-if="paginatedMachines.length === 0" class="no-data">
+        No data available.
+      </div>
+      <table v-else>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th @click="toggleSort('name')">
+              Name {{ sortBy === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
+            </th>
+            <th>Group</th>
+            <th>Status</th>
+            <th>Created At</th>
+            <th>Category</th>
+            <th>Manufacturer</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            v-for="machine in paginatedMachines"
+            :key="machine.id"
+            @click="openMachineDetails(machine.id)"
+          >
+            <td>{{ machine.id }}</td>
+            <td>{{ machine.name }}</td>
+            <td>{{ machine.group }}</td>
+            <td>{{ machine.status }}</td>
+            <td>{{ machine.created_at || 'N/A' }}</td>
+            <td>{{ machine.category || 'N/A' }}</td>
+            <td>{{ machine.manufacturer || 'N/A' }}</td>
+          </tr>
+        </tbody>
+      </table>
 
-    <table v-else>
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th @click="toggleSort('name')">
-            Name {{ sortBy === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
-          </th>
-          <th>Group</th>
-          <th>Status</th>
-          <th>Created At</th>
-          <th>Category</th>
-          <th>Manufacturer</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr
-          v-for="machine in paginatedMachines"
-          :key="machine.id"
-          @click="openMachineDetails(machine.id)"
-        >
-          <td>{{ machine.id }}</td>
-          <td>{{ machine.name }}</td>
-          <td>{{ machine.group }}</td>
-          <td>{{ machine.status }}</td>
-          <td>{{ machine.created_at || 'N/A' }}</td>
-          <td>{{ machine.category || 'N/A' }}</td>
-          <td>{{ machine.manufacturer || 'N/A' }}</td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div class="pagination" v-if="paginatedMachines.length > 0">
-      <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
-      <span>Page {{ currentPage }} of {{ totalPages }}</span>
-      <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      <div class="pagination" v-if="paginatedMachines.length > 0">
+        <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button @click="nextPage" :disabled="currentPage === totalPages">Next</button>
+      </div>
     </div>
 
     <machine-details
@@ -77,31 +83,84 @@
 import { useStore } from 'vuex';
 import { computed, ref, onMounted } from 'vue';
 import MachineDetails from '../views/MachineDetails.vue';
+import keycloak from '../keycloak';
 
 export default {
   name: 'MachineTable',
   components: { MachineDetails },
   setup() {
     const store = useStore();
-    const machines = computed(() => store.state.machines);
     const selectedMachine = ref(null);
     const machineDetailsModal = ref(null);
     const currentPage = ref(1);
     const itemsPerPage = 30;
-
     const selectedStatus = ref('');
     const selectedCategory = ref('');
     const startDate = ref('');
     const endDate = ref('');
     const sortBy = ref('name');
     const sortAsc = ref(true);
+    const importInput = ref(null);
+    const machines = ref([]); // для админа
+    const machinesLoaded = ref(false); // для админа
 
+    // Определяем роли
+    const roles = keycloak.tokenParsed?.realm_access?.roles || [];
+    const isAdmin = roles.includes('Admin');
+    const isTechnician = roles.includes('Technician');
+
+    // Для technician — грузим с сервера
     onMounted(() => {
-      store.dispatch('fetchMachines');
+      if (isTechnician) {
+        store.dispatch('fetchMachines');
+      }
+      if (isAdmin) {
+        // если нужно, можно подгружать из localStorage
+        const saved = localStorage.getItem('adminMachines');
+        if (saved) {
+          machines.value = JSON.parse(saved);
+          machinesLoaded.value = true;
+        }
+      }
     });
 
+    // Для technician — используем store, для admin — локальный массив
+    const machinesSource = computed(() => {
+      if (isTechnician) return store.state.machines;
+      if (isAdmin) return machines.value;
+      return [];
+    });
+
+    const importCsv = (event) => {
+      if (!isAdmin) return;
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const text = e.target.result;
+        const lines = text.split('\n').filter(line => line.trim());
+        if (lines.length > 0) {
+          const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+          const data = lines.slice(1).map(line => {
+            const values = line.split(',').map(v => v.trim().replace(/"/g, ''));
+            const row = {};
+            headers.forEach((header, idx) => {
+              row[header] = values[idx] || '';
+            });
+            return row;
+          });
+          machines.value = data;
+          machinesLoaded.value = true;
+          currentPage.value = 1;
+          localStorage.setItem('adminMachines', JSON.stringify(data));
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    };
+
     const openMachineDetails = (machineId) => {
-      const machine = machines.value.find((m) => m.id === machineId);
+      const machine = machinesSource.value.find((m) => m.id === machineId);
       if (machine) {
         selectedMachine.value = { ...machine };
         if (machineDetailsModal.value) {
@@ -112,9 +171,6 @@ export default {
 
     const closeMachineDetails = () => {
       selectedMachine.value = null;
-      if (machineDetailsModal.value) {
-        machineDetailsModal.value.close();
-      }
     };
 
     const updateMachine = (updatedMachine) => {
@@ -123,7 +179,7 @@ export default {
     };
 
     const filteredMachines = computed(() => {
-      return machines.value.filter(machine => {
+      return machinesSource.value.filter(machine => {
         const statusMatch = selectedStatus.value === '' || machine.status === selectedStatus.value;
         const categoryMatch = selectedCategory.value === '' || machine.category === selectedCategory.value;
 
@@ -154,7 +210,7 @@ export default {
     });
 
     const totalPages = computed(() => {
-      return Math.ceil(sortedMachines.value.length / itemsPerPage);
+      return Math.ceil(sortedMachines.value.length / itemsPerPage) || 1;
     });
 
     const previousPage = () => {
@@ -175,7 +231,6 @@ export default {
     };
 
     return {
-      machines,
       selectedMachine,
       openMachineDetails,
       closeMachineDetails,
@@ -192,7 +247,12 @@ export default {
       sortBy,
       sortAsc,
       toggleSort,
-      paginatedMachines
+      paginatedMachines,
+      importCsv,
+      importInput,
+      isAdmin,
+      isTechnician,
+      machinesLoaded,
     };
   },
 };
@@ -232,6 +292,28 @@ h2 {
 .date-range label {
   font-weight: 500;
   white-space: nowrap;
+}
+
+.import-label {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+}
+
+.import-btn {
+  background: #38a169;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.2s;
+}
+
+.import-btn:hover {
+  background: #2f855a;
 }
 
 table {
@@ -285,4 +367,5 @@ td {
   margin-top: 15px;
   font-style: italic;
 }
+
 </style>
