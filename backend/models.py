@@ -21,7 +21,7 @@ class User(db.Model):
     """
     Stores user credentials and roles.
 
-    WHY: Differentiates admin and technician access. Used for login/authentication.
+    WHY: Display information of users on the software.
     """
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)

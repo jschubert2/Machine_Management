@@ -26,8 +26,14 @@ register_routes(app)
 # tables creation on startup
 with app.app_context():
     db.create_all()
+    
+def print_swagger_url():
+    print("\n" + "="*80)
+    print("🌐 Swagger Interface for Endpoint Documentation")
+    print("👉 http://localhost:5000/apidocs/#/")
+    print("="*80 + "\n")
 
 # launch the app
 if __name__ == '__main__':
-    print("Swagger interface for endponints documentation : http://localhost:5000/apidocs/#/")
+    print_swagger_url()
     app.run(debug=False, port=5000)
