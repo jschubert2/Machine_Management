@@ -7,6 +7,7 @@
         <label class="import-label">
           <input type="file" accept=".csv" @change="importCsv" style="display:none" ref="importInput" />
           <button class="import-btn" @click.prevent="$refs.importInput.click()">import CSV</button>
+          <button class="clear-btn" @click="clearImport" v-if="machinesLoaded">clear</button>
         </label>
       </template>
       <select v-model="selectedStatus">
@@ -101,21 +102,18 @@ export default {
     const sortBy = ref('name');
     const sortAsc = ref(true);
     const importInput = ref(null);
-    const machines = ref([]); // для админа
-    const machinesLoaded = ref(false); // для админа
+    const machines = ref([]); 
+    const machinesLoaded = ref(false); 
 
-    // Определяем роли
     const roles = keycloak.tokenParsed?.realm_access?.roles || [];
     const isAdmin = roles.includes('Admin');
     const isTechnician = roles.includes('Technician');
 
-    // Для technician — грузим с сервера
     onMounted(() => {
       if (isTechnician) {
         store.dispatch('fetchMachines');
       }
       if (isAdmin) {
-        // если нужно, можно подгружать из localStorage
         const saved = localStorage.getItem('adminMachines');
         if (saved) {
           machines.value = JSON.parse(saved);
@@ -124,7 +122,6 @@ export default {
       }
     });
 
-    // Для technician — используем store, для admin — локальный массив
     const machinesSource = computed(() => {
       if (isTechnician) return store.state.machines;
       if (isAdmin) return machines.value;
@@ -230,6 +227,12 @@ export default {
       }
     };
 
+    const clearImport = () => {
+      machines.value = [];
+      machinesLoaded.value = false;
+      localStorage.removeItem('adminMachines');
+    };
+
     return {
       selectedMachine,
       openMachineDetails,
@@ -253,6 +256,7 @@ export default {
       isAdmin,
       isTechnician,
       machinesLoaded,
+      clearImport,
     };
   },
 };
@@ -314,6 +318,22 @@ h2 {
 
 .import-btn:hover {
   background: #2f855a;
+}
+
+.clear-btn {
+  background: #e53e3e;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 7px 18px;
+  font-size: 1em;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.2s;
+}
+
+.clear-btn:hover {
+  background: #c53030;
 }
 
 table {
