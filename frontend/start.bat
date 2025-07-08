@@ -9,14 +9,6 @@ echo Installing specific dependencies: vuex, chartjs-adapter-date-fns, date-fns.
 call npm install vuex chartjs-adapter-date-fns date-fns
 
 echo.
-echo Starting Keycloak...
-if exist kc.bat (
-  call kc.bat start-dev
-) else (
-  echo [ERROR] kc.bat not found in current directory.
-  pause
-  exit /b
-)
 
 echo Starting the development server...
 start /min cmd /c "timeout /t 3 >nul && start http://localhost:5173"
