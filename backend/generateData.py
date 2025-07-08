@@ -4,17 +4,15 @@ import random
 import hashlib
 from datetime import datetime, timedelta, date
 
-# Crée le dossier CSV
+# create csv folder
 os.makedirs('csv', exist_ok=True)
 
-# Config
 NUM_MACHINES = 50
 NUM_TOOLS = 30
 NUM_USERS = 10
 DASHBOARD_MONTHS = 3
 MAINTENANCE_YEARS = [2021, 2022, 2023]
 
-# Fonctions utilitaires
 def random_date(start: date, end: date) -> date:
     """
     Generates a random date between two given dates.
