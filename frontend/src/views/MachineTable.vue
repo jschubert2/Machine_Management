@@ -3,23 +3,34 @@
     <h2>Machines</h2>
 
     <div class="filters">
+      <!-- Admin-only file import logic (CSV handled via <input type="file">) -->
       <template v-if="isAdmin">
         <label class="import-label">
+          <!-- Hidden file input triggered programmatically -->
           <input type="file" accept=".csv" @change="importCsv" style="display:none" ref="importInput" />
+
+          <!-- Trigger file input with custom button (required for style) -->
           <button class="import-btn" @click.prevent="$refs.importInput.click()">import CSV</button>
+
+          <!-- Clear imported data from localStorage -->
           <button class="clear-btn" @click="clearImport" v-if="machinesLoaded">clear</button>
         </label>
       </template>
+
+      <!-- Simple dropdown filters (no comment needed) -->
       <select v-model="selectedStatus">
         <option value="">All Statuses</option>
         <option>Running</option>
         <option>Offline</option>
       </select>
+
       <select v-model="selectedCategory">
         <option value="">All Categories</option>
         <option>Manual</option>
         <option>Automatic</option>
       </select>
+
+      <!-- Custom date range filter for creation date -->
       <div class="date-range">
         <label>Created At:</label>
         <input type="date" v-model="startDate" />
@@ -28,15 +39,23 @@
       </div>
     </div>
 
-    <div v-if="isAdmin && !machinesLoaded" class="no-data">upload CSV file to display machines</div>
+    <!-- Admin sees prompt to upload if no CSV yet -->
+    <div v-if="isAdmin && !machinesLoaded" class="no-data">
+      upload CSV file to display machines
+    </div>
+
     <div v-else>
+      <!-- If no machines match filters -->
       <div v-if="paginatedMachines.length === 0" class="no-data">
         No data available.
       </div>
+
+      <!-- Main machine data table -->
       <table v-else>
         <thead>
           <tr>
             <th>ID</th>
+            <!-- Sortable column with direction toggle and indicator -->
             <th @click="toggleSort('name')">
               Name {{ sortBy === 'name' ? (sortAsc ? '↑' : '↓') : '' }}
             </th>
@@ -47,7 +66,9 @@
             <th>Manufacturer</th>
           </tr>
         </thead>
+
         <tbody>
+          <!-- Each row opens machine detail modal -->
           <tr
             v-for="machine in paginatedMachines"
             :key="machine.id"
@@ -64,6 +85,7 @@
         </tbody>
       </table>
 
+      <!-- Pagination controls (simple, obvious logic) -->
       <div class="pagination" v-if="paginatedMachines.length > 0">
         <button @click="previousPage" :disabled="currentPage === 1">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
@@ -71,6 +93,7 @@
       </div>
     </div>
 
+    <!-- MachineDetails modal instance (ref + events) -->
     <machine-details
       ref="machineDetailsModal"
       :machine="selectedMachine"
@@ -81,6 +104,18 @@
 </template>
 
 <script>
+/**
+ * MachineTable.vue
+ *
+ * Purpose:
+ * Displays a list of production machines in a table with support for:
+ * - CSV-based import (Admin)
+ * - Real-time fetch from backend via Vuex (Technician)
+ * - Filtering by status, category, and creation date
+ * - Sorting and pagination
+ * - Opening machine detail modal with tool assignment and maintenance view
+ */
+
 import { useStore } from 'vuex';
 import { computed, ref, onMounted } from 'vue';
 import MachineDetails from '../views/MachineDetails.vue';
@@ -89,26 +124,45 @@ import keycloak from '../keycloak';
 export default {
   name: 'MachineTable',
   components: { MachineDetails },
+
   setup() {
     const store = useStore();
+
+    // Machine selection and modal ref
     const selectedMachine = ref(null);
     const machineDetailsModal = ref(null);
+
+    // Pagination
     const currentPage = ref(1);
     const itemsPerPage = 30;
+
+    // Filter state
     const selectedStatus = ref('');
     const selectedCategory = ref('');
     const startDate = ref('');
     const endDate = ref('');
+
+    // Sorting
     const sortBy = ref('name');
     const sortAsc = ref(true);
-    const importInput = ref(null);
-    const machines = ref([]); 
-    const machinesLoaded = ref(false); 
 
+    // File input for CSV import
+    const importInput = ref(null);
+
+    // Local data for Admin users
+    const machines = ref([]);
+    const machinesLoaded = ref(false);
+
+    // Role check using Keycloak
     const roles = keycloak.tokenParsed?.realm_access?.roles || [];
     const isAdmin = roles.includes('Admin');
     const isTechnician = roles.includes('Technician');
 
+    /**
+     * Lifecycle hook: On mount, fetch or load machine data based on user role.
+     * - Technicians load from backend (via Vuex)
+     * - Admins load from localStorage (CSV import)
+     */
     onMounted(() => {
       if (isTechnician) {
         store.dispatch('fetchMachines');
@@ -122,16 +176,24 @@ export default {
       }
     });
 
+    /**
+     * Computed source of machine list depending on role.
+     */
     const machinesSource = computed(() => {
       if (isTechnician) return store.state.machines;
       if (isAdmin) return machines.value;
       return [];
     });
 
+    /**
+     * Handles CSV import and parses it into machine objects.
+     * Only accessible to Admin users.
+     */
     const importCsv = (event) => {
       if (!isAdmin) return;
       const file = event.target.files[0];
       if (!file) return;
+
       const reader = new FileReader();
       reader.onload = (e) => {
         const text = e.target.result;
@@ -146,6 +208,7 @@ export default {
             });
             return row;
           });
+
           machines.value = data;
           machinesLoaded.value = true;
           currentPage.value = 1;
@@ -156,6 +219,9 @@ export default {
       event.target.value = '';
     };
 
+    /**
+     * Opens the modal showing detailed info for the selected machine.
+     */
     const openMachineDetails = (machineId) => {
       const machine = machinesSource.value.find((m) => m.id === machineId);
       if (machine) {
@@ -166,15 +232,25 @@ export default {
       }
     };
 
+    /**
+     * Closes the machine detail modal.
+     */
     const closeMachineDetails = () => {
       selectedMachine.value = null;
     };
 
+    /**
+     * Updates a machine entry after changes (e.g. tool assignment).
+     * Uses Vuex mutation to keep store consistent.
+     */
     const updateMachine = (updatedMachine) => {
       selectedMachine.value = { ...updatedMachine };
       store.commit('updateMachine', updatedMachine);
     };
 
+    /**
+     * Filters machines by status, category, and date range.
+     */
     const filteredMachines = computed(() => {
       return machinesSource.value.filter(machine => {
         const statusMatch = selectedStatus.value === '' || machine.status === selectedStatus.value;
@@ -188,6 +264,9 @@ export default {
       });
     });
 
+    /**
+     * Sorts filtered machines based on current column and direction.
+     */
     const sortedMachines = computed(() => {
       const sorted = [...filteredMachines.value];
       sorted.sort((a, b) => {
@@ -200,24 +279,39 @@ export default {
       return sorted;
     });
 
+    /**
+     * Returns only the machines visible on the current page.
+     */
     const paginatedMachines = computed(() => {
       const start = (currentPage.value - 1) * itemsPerPage;
       const end = start + itemsPerPage;
       return sortedMachines.value.slice(start, end);
     });
 
+    /**
+     * Calculates total number of pages based on filtered data.
+     */
     const totalPages = computed(() => {
       return Math.ceil(sortedMachines.value.length / itemsPerPage) || 1;
     });
 
+    /**
+     * Moves pagination one page backward.
+     */
     const previousPage = () => {
       if (currentPage.value > 1) currentPage.value--;
     };
 
+    /**
+     * Moves pagination one page forward.
+     */
     const nextPage = () => {
       if (currentPage.value < totalPages.value) currentPage.value++;
     };
 
+    /**
+     * Handles column sort toggle when user clicks table header.
+     */
     const toggleSort = (column) => {
       if (sortBy.value === column) {
         sortAsc.value = !sortAsc.value;
@@ -227,12 +321,16 @@ export default {
       }
     };
 
+    /**
+     * Clears admin-imported machine data and resets state.
+     */
     const clearImport = () => {
       machines.value = [];
       machinesLoaded.value = false;
       localStorage.removeItem('adminMachines');
     };
 
+    // Bind all variables/functions to template
     return {
       selectedMachine,
       openMachineDetails,

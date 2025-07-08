@@ -1,7 +1,9 @@
 <template>
   <div class="maintenance-history">
     <h2>Maintenance history</h2>
+
     <div class="controls">
+      <!-- Dropdown to select machine, required before loading history -->
       <select v-model="selectedMachineId">
         <option value="" disabled>choose machine...</option>
         <option v-for="machine in machines" :key="machine.id" :value="machine.id">
@@ -9,11 +11,22 @@
         </option>
       </select>
     </div>
+
+    <!-- Initial hint to prompt machine selection -->
     <div v-if="!selectedMachineId" class="hint">choose machine to show history...</div>
+
     <div v-else>
+      <!-- Message shown when no history exists -->
       <div v-if="history.length === 0" class="hint">No maintenance history found.</div>
+
+      <!-- Animated list with staggered rendering -->
       <transition-group name="stagger-fade-slide" tag="div">
-        <div v-for="(item, idx) in history" :key="item.id" class="history-card" :style="{'--stagger-index': idx}">
+        <div
+          v-for="(item, idx) in history"
+          :key="item.id"
+          class="history-card"
+          :style="{'--stagger-index': idx}"
+        >
           <div class="history-row"><b>Date:</b> {{ item.date }}</div>
           <div class="history-row"><b>Performed By:</b> {{ item.performed_by }}</div>
           <div class="history-row"><b>Notes:</b> <i>{{ item.notes }}</i></div>
@@ -21,70 +34,109 @@
         </div>
       </transition-group>
     </div>
+
+    <!-- Error display for failed API calls -->
     <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
   </div>
 </template>
-
 <script>
 import axios from 'axios';
 
 export default {
   name: 'MaintenanceHistory',
+
   data() {
     return {
-      machines: [],
-      selectedMachineId: '',
-      history: [],
-      errorMessage: '',
-      _fullHistory: [],
-      _staggerTimeouts: [],
+      machines: [],              // List of all machines (populated on mount)
+      selectedMachineId: '',     // Currently selected machine ID from dropdown
+      history: [],               // Rendered entries (added with stagger effect)
+      errorMessage: '',          // Shown when API calls fail
+      _fullHistory: [],          // Full raw history for the selected machine
+      _staggerTimeouts: [],      // Array of timeouts used for staggered animation
     };
   },
+
   watch: {
+    /**
+     * Watcher: when selected machine changes, load history or reset view.
+     */
     selectedMachineId(newVal) {
       if (newVal) this.fetchHistory();
       else this.history = [];
     }
   },
+
   methods: {
+    /**
+     * Fetches all available machines from the backend.
+     * Populates the dropdown menu.
+     */
     async fetchMachines() {
       try {
-        const res = await axios.get('http://127.0.0.1:5000/machines', { params: { page: 1, per_page: 100 } });
+        const res = await axios.get('http://127.0.0.1:5000/machines', {
+          params: { page: 1, per_page: 100 }
+        });
         this.machines = res.data.machines || [];
       } catch (e) {
         this.errorMessage = 'Failed to load machines.';
       }
     },
+
+    /**
+     * Fetches the maintenance history for the selected machine.
+     * Uses internal array to store full result and then delegates to animation function.
+     */
     async fetchHistory() {
       this.errorMessage = '';
       this.history = [];
       this._fullHistory = [];
+
+      // Clear any ongoing stagger animations
       this._staggerTimeouts.forEach(t => clearTimeout(t));
       this._staggerTimeouts = [];
+
       if (!this.selectedMachineId) return;
+
       try {
         const res = await axios.get(`http://127.0.0.1:5000/machines/${this.selectedMachineId}/maintenance`);
         this._fullHistory = res.data.maintenance_logs || [];
-        this.staggerShowHistory();
+        this.staggerShowHistory(); // Show items one by one with animation
       } catch (e) {
         this.errorMessage = 'Failed to load maintenance history.';
       }
     },
+
+    /**
+     * Shows history items one by one with delay between each,
+     * to create a staggered visual animation effect.
+     */
     staggerShowHistory() {
       this.history = [];
+
+      // Clear any previous timeouts to avoid duplicates
       this._staggerTimeouts.forEach(t => clearTimeout(t));
       this._staggerTimeouts = [];
+
+      // Schedule entries with delay
       this._fullHistory.forEach((item, idx) => {
         const timeout = setTimeout(() => {
           this.history.push(item);
-        }, idx * 120);
+        }, idx * 120); // 120ms per item
         this._staggerTimeouts.push(timeout);
       });
     },
   },
+
+  /**
+   * Lifecycle: fetch machine list once component is mounted.
+   */
   mounted() {
     this.fetchMachines();
   },
+
+  /**
+   * Lifecycle: clear any running timeouts on unmount to avoid memory leaks.
+   */
   beforeUnmount() {
     this._staggerTimeouts.forEach(t => clearTimeout(t));
   }

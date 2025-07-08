@@ -1,43 +1,55 @@
 <template>
+  <!-- Sidebar navigation component, shown based on visibility flag -->
   <div class="sidebar" :class="{ hidden: !isVisible }">
+    <!-- Button to close sidebar, emits 'close' event to parent -->
     <button class="close-btn" @click="$emit('close')">✖</button>
 
-    <!-- 👤 Показываем имя пользователя -->
+    <!-- User identity section, only shown if full name is available -->
     <div class="user-info" v-if="userFullName">
       👤 {{ userFullName }}
     </div>
 
+    <!-- Application navigation links -->
     <nav>
       <ul>
+        <!-- Link to Dashboard view -->
         <li>
           <router-link to="/" :class="{ active: $route.name === 'Dashboard' }">
             Dashboard
           </router-link>
         </li>
+
+        <!-- Link to Machines table -->
         <li>
           <router-link to="/machines" :class="{ active: $route.name === 'Machines' }">
             Machines
           </router-link>
         </li>
+
+        <!-- Link to Tools table -->
         <li>
           <router-link to="/tools" :class="{ active: $route.name === 'Tools' }">
             Tools
           </router-link>
         </li>
-        <!-- Только для Technician -->
+
+        <!-- Technician-specific functionality -->
         <li v-if="isTechnician">
           <router-link to="/register-maintenance" :class="{ active: $route.name === 'RegisterMaintenance' }">
             Register Maintenance
           </router-link>
         </li>
+
+        <!-- Accessible by both Admins and Technicians -->
         <li>
           <router-link to="/maintenance-history" :class="{ active: $route.name === 'MaintenanceHistory' }">
-            Maintenance history
+            Maintenance History
           </router-link>
         </li>
       </ul>
     </nav>
 
+    <!-- Logout action -->
     <button class="logout-button" @click="logout">
       Logout
     </button>
@@ -45,8 +57,25 @@
 </template>
 
 <script>
+// Import Keycloak instance for authentication control
 import keycloak from '../keycloak'
 
+/**
+ * Sidebar Component
+ *
+ * Displays the application's main navigation menu depending on user role.
+ * Visible on all views except the login screen. Role-specific options are conditionally rendered.
+ *
+ * Props:
+ * @prop {Boolean} isVisible - Controls whether the sidebar is shown or hidden
+ * @prop {String} userFullName - Full name of the currently logged-in user
+ *
+ * Computed:
+ * @computed isTechnician - Checks if the logged-in user has the 'Technician' role
+ *
+ * Methods:
+ * @method logout - Triggers Keycloak logout and redirects to the application root
+ */
 export default {
   name: 'Sidebar',
   props: {
@@ -60,11 +89,21 @@ export default {
     }
   },
   computed: {
+    /**
+     * Determines whether the current user holds the 'Technician' role.
+     * This affects visibility of technician-specific menu items.
+     *
+     * @return {Boolean} true if user is a Technician, false otherwise
+     */
     isTechnician() {
       return keycloak.tokenParsed?.realm_access?.roles?.includes('Technician');
     }
   },
   methods: {
+    /**
+     * Logs the user out via Keycloak and redirects to the application's base URL.
+     * Used to end session and return to login.
+     */
     logout() {
       keycloak.logout({
         redirectUri: window.location.origin
@@ -75,6 +114,7 @@ export default {
 </script>
 
 <style scoped>
+/* Styles for the sidebar container */
 .sidebar {
   width: 200px;
   background-color: #1a2a44;

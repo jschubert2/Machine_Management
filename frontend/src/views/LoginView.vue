@@ -1,14 +1,18 @@
 <template>
+  <!-- Login Page Layout -->
   <div class="login-page">
     <div class="login-wrapper">
+      <!-- Left Side: Login Box -->
       <div class="login-left">
         <div class="login-box">
           <img :src="logo" alt="Logo" class="logo" />
           <h1 class="title">Machine Management System</h1>
           <p class="subtitle">Please log in with your organization account</p>
+          <!-- Keycloak login trigger -->
           <button class="login-button" @click="login">Sign in with Keycloak</button>
         </div>
       </div>
+      <!-- Right Side: Illustration Image -->
       <div class="login-right">
         <img :src="sideImage" alt="Visual" class="side-image" />
       </div>
@@ -17,28 +21,62 @@
 </template>
 
 <script>
+/**
+ * LoginView.vue
+ *
+ * Purpose:
+ * This component presents the login page for the Machine Management System.
+ * It provides a branded login interface and delegates authentication to Keycloak.
+ * 
+ * Behavior:
+ * - Triggers Keycloak login on button click
+ * - Restores page styles upon component unload
+ */
+
 import logo from '../assets/logo.png'
 import sideImage from '../assets/mainimage.png'
 import keycloak from '../keycloak'
 
 export default {
   name: 'LoginView',
+
   data() {
-    return { logo, sideImage }
+    return {
+      logo,
+      sideImage
+    }
   },
+
+  /**
+   * Lifecycle hook: mounted
+   * 
+   * Adjusts global styles to make the login page occupy full screen
+   * without scrollbars or margin. Ensures a clean look across browsers.
+   */
   mounted() {
     document.body.style.margin = '0'
     document.body.style.overflow = 'hidden'
     document.documentElement.style.height = '100%'
     document.body.style.height = '100%'
   },
+
+  /**
+   * Lifecycle hook: beforeUnmount
+   * 
+   * Restores original global styles to prevent layout issues after navigation.
+   */
   beforeUnmount() {
     document.body.style.margin = ''
     document.body.style.overflow = ''
     document.documentElement.style.height = ''
     document.body.style.height = ''
   },
+
   methods: {
+    /**
+     * Initiates login process using Keycloak.
+     * Redirects user to the identity provider's login page.
+     */
     login() {
       keycloak.login()
     }

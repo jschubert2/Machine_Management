@@ -5,11 +5,13 @@
     </div>
 
     <div class="filters">
+      <!-- Filter tools by type -->
       <select v-model="filterType">
         <option value="">All Types</option>
         <option v-for="type in toolTypes" :key="type">{{ type }}</option>
       </select>
 
+      <!-- Filter tools by status -->
       <select v-model="filterStatus">
         <option value="">All Statuses</option>
         <option>Attached</option>
@@ -17,6 +19,7 @@
         <option>Storage</option>
       </select>
 
+      <!-- Filter tools by creation date -->
       <div class="date-range">
         <label>Created At Period:</label>
         <input type="date" v-model="filterStartDate" />
@@ -24,6 +27,7 @@
         <input type="date" v-model="filterEndDate" />
       </div>
 
+      <!-- Sort by wear level -->
       <button @click="toggleSortOrder">
         Sort Wear Level {{ sortOrder === 'asc' ? '↑' : '↓' }}
       </button>
@@ -47,23 +51,30 @@
             <td>{{ tool.id }}</td>
             <td>{{ tool.name }}</td>
             <td>{{ tool.type }}</td>
+
+            <!-- Apply color-coded class based on status -->
             <td :class="statusClass(tool.metrics?.[0]?.status)">
               {{ tool.metrics?.[0]?.status || '-' }}
             </td>
+
+            <!-- Highlight tools with wear > 80% -->
             <td :class="wearLevelClass(tool.metrics?.[0]?.wear_level)">
               {{ tool.metrics?.[0]?.wear_level ?? '-' }}
             </td>
+
             <td>{{ tool.metrics?.[0]?.storage_location || '-' }}</td>
             <td>{{ tool.created_at }}</td>
           </tr>
         </tbody>
       </table>
+
       <div class="pagination">
         <button @click="changePage(currentPage - 1)" :disabled="currentPage === 1">Previous</button>
         <span>Page {{ currentPage }} of {{ totalPages }}</span>
         <button @click="changePage(currentPage + 1)" :disabled="currentPage === totalPages">Next</button>
       </div>
     </div>
+
     <div v-else class="no-data-message">
       <p>No data available.</p>
     </div>
@@ -81,30 +92,35 @@ export default {
   },
   data() {
     return {
-      currentPage: 1,
-      perPage: 30,
+      currentPage: 1,         // Current pagination page
+      perPage: 30,            // Items per page
       isLoading: false,
-      filterType: '',
+      filterType: '',         // Dropdown filter
       filterStatus: '',
       filterStartDate: '',
       filterEndDate: '',
-      sortOrder: 'asc',
+      sortOrder: 'asc',       // Wear level sort order
     };
   },
   computed: {
+    // Extracts unique tool types from the dataset
     toolTypes() {
       const types = this.tools.map(t => t.type).filter(Boolean);
       return [...new Set(types)];
     },
+
+    // Filters and sorts tools based on user inputs
     filteredAndSortedTools() {
       return this.tools
         .filter(t => {
           const status = t.metrics?.[0]?.status?.toLowerCase();
+
           const typeMatch = this.filterType === '' || t.type === this.filterType;
+
           const statusMatch =
             this.filterStatus === '' ||
             status === this.filterStatus.toLowerCase() ||
-            (status === 'in storage' && this.filterStatus.toLowerCase() === 'storage');
+            (status === 'in storage' && this.filterStatus.toLowerCase() === 'storage'); // normalize "in storage"
 
           const date = new Date(t.created_at);
           const start = this.filterStartDate ? new Date(this.filterStartDate) : null;
@@ -119,23 +135,32 @@ export default {
           return this.sortOrder === 'asc' ? aWear - bWear : bWear - aWear;
         });
     },
+
+    // Returns only the current page’s slice
     paginatedTools() {
       const start = (this.currentPage - 1) * this.perPage;
       return this.filteredAndSortedTools.slice(start, start + this.perPage);
     },
+
+    // Calculates number of total pages
     totalPages() {
       return Math.ceil(this.filteredAndSortedTools.length / this.perPage);
     },
   },
   methods: {
+    // Update current page if in bounds
     changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
       }
     },
+
+    // Toggle between ascending and descending wear level sort
     toggleSortOrder() {
       this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
     },
+
+    // Returns class name based on tool status
     statusClass(status) {
       switch (status?.toLowerCase()) {
         case 'attached': return 'status-attached';
@@ -145,6 +170,8 @@ export default {
         default: return '';
       }
     },
+
+    // Highlights high-wear tools
     wearLevelClass(level) {
       return typeof level === 'number' && level > 80 ? 'wear-high' : '';
     },

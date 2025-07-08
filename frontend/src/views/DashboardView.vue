@@ -1,19 +1,45 @@
+/**DashboardView.vue
+ *
+ * Purpose:
+ * A dynamic dashboard page that allows users to:
+ * - Select a machine and time range
+ * - View KPIs (OEE, Availability, Performance, Quality)
+ * - Toggle which metrics appear in the chart
+ * - Visualize time-series KPI data using Chart.js
+ * 
+ * Key features:
+ * - Reactive KPI data and chart updating
+ * - Adaptive time formatting based on date range
+ * - Metric visibility toggle using checkbox UI
+ * - REST API integration with Flask backend
+ * - Uses Chart.js and date-fns for time-based charts
+ */
+
 <template>
+  <!-- Main container for the dashboard page -->
   <div class="dashboard">
     <h2>Dashboard</h2>
 
+    <!-- Machine and time range selection controls -->
     <div class="controls">
+      
+      <!-- Dropdown for selecting a machine (bound to selectedMachineId) -->
       <select v-model="selectedMachineId">
         <option disabled value="">Select a machine</option>
-        <option v-for="m in machines" :key="m.id" :value="m.id">{{ m.name }}</option>
+        <option v-for="m in machines" :key="m.id" :value="m.id">
+          {{ m.name }}
+        </option>
       </select>
 
+      <!-- Dropdown for selecting the number of days to display KPI data -->
       <select v-model.number="timeRange">
-        <option v-for="d in ranges" :key="d" :value="d">Last {{ labelOf(d) }}</option>
+        <option v-for="d in ranges" :key="d" :value="d">
+          Last {{ labelOf(d) }}
+        </option>
       </select>
-
     </div>
 
+    <!-- Static KPI boxes showing the current values of each metric -->
     <div class="kpi-squares">
       <div class="kpi-square oee">
         <h3>OEE</h3>
@@ -33,10 +59,17 @@
       </div>
     </div>
 
+    <!-- Additional KPI cards rendered dynamically using the MetricCard component -->
     <div class="metrics">
-      <MetricCard v-for="card in cards" :key="card.label" :label="card.label" :value="card.value" />
+      <MetricCard
+        v-for="card in cards"
+        :key="card.label"
+        :label="card.label"
+        :value="card.value"
+      />
     </div>
 
+    <!-- Checkboxes that control the visibility of each metric in the chart -->
     <div class="metric-toggle">
       <label v-for="t in metricTypes" :key="t">
         <input type="checkbox" :value="t" v-model="visibleMetrics" />
@@ -44,6 +77,7 @@
       </label>
     </div>
 
+    <!-- Chart.js canvas element for rendering time-series KPI data -->
     <div class="chart-wrapper">
       <canvas ref="chartCanvas"></canvas>
     </div>
@@ -55,7 +89,9 @@ import { ref, reactive, computed, watch, onMounted, onBeforeUnmount, nextTick } 
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
+import { getISOWeek, startOfISOWeek, formatISO } from 'date-fns';
 
+// Define available metric types and their display colors
 const metricTypes = ['oee', 'availability', 'performance', 'output_quality'] as const;
 const colorMap = {
   oee: '#007bff',
@@ -64,16 +100,20 @@ const colorMap = {
   output_quality: '#dc3545'
 };
 
+// Available time range options in days
 const ranges = [7, 30, 90] as const;
 
+// Machine selection and data containers
 const machines = ref<{ id: string; name: string }[]>([]);
 const selectedMachineId = ref('');
 const timeRange = ref(7);
 const visibleMetrics = ref<string[]>([...metricTypes]);
 const loading = ref(false);
 
+// Holds the latest raw backend response per metric
 let latestRaw: Record<string, any[]> | null = null;
 
+// Reactive KPI container
 const kpi = reactive<Record<string, number>>({
   oee: 0,
   availability: 0,
@@ -81,23 +121,30 @@ const kpi = reactive<Record<string, number>>({
   output_quality: 0
 });
 
+// Axios instance for API calls
 const api = axios.create({
   baseURL: 'http://localhost:5000',
   timeout: 8000
 });
 
+// Format a metric type to readable label
 const pretty = (t: string) => t.replace('_', ' ').toUpperCase();
+
+// Convert days to label for dropdown (e.g., 30 → "30 days")
 const labelOf = (d: number) => (d === 90 ? '3 months' : `${d} days`);
 
+// Compute average of an array
 function avg(arr: number[]): number {
   return arr.length ? +(arr.reduce((a, b) => a + b) / arr.length).toFixed(2) : 0;
 }
 
+// MetricCard component shown below KPI blocks
 const MetricCard = {
   props: { label: String, value: [String, Number] },
   template: `<div class="metric"><h3>{{ label }}</h3><p>{{ value }}%</p></div>`
 };
 
+// Derived metric card values based on current KPIs
 const cards = computed(() => [
   { label: 'OEE', value: kpi.oee },
   { label: 'Availability', value: kpi.availability },
@@ -105,9 +152,14 @@ const cards = computed(() => [
   { label: 'Quality', value: kpi.output_quality }
 ]);
 
+// Chart reference and instance
 const chartCanvas = ref<HTMLCanvasElement | null>(null);
 let chart: Chart | null = null;
 
+/**
+ * Builds or updates the KPI line chart using Chart.js.
+ * Called after metrics are loaded and chart canvas is ready.
+ */
 function buildOrUpdateChart(dataset: any[]) {
   const ctx = chartCanvas.value?.getContext('2d');
   if (!ctx) return;
@@ -165,12 +217,17 @@ function buildOrUpdateChart(dataset: any[]) {
   }
 }
 
+// Return the time unit (day/week/month) based on selected range
 function unitFor(days: number) {
   if (days <= 30) return 'day';
   if (days <= 90) return 'week';
   return 'month';
 }
 
+/**
+ * Fetches the machine list from the backend.
+ * Automatically selects the first machine on initial load.
+ */
 async function fetchMachines() {
   const { data } = await api.get('/machines', { params: { page: 1, per_page: 100 } });
   machines.value = data.machines;
@@ -179,11 +236,14 @@ async function fetchMachines() {
   }
 }
 
+/**
+ * Fetches KPI data for the selected machine and range,
+ * calculates averages, and updates the chart accordingly.
+ */
 async function fetchMetrics() {
   if (!selectedMachineId.value) return;
   const id = selectedMachineId.value;
   const days = timeRange.value;
-
   const ctrl = new AbortController();
 
   try {
@@ -225,8 +285,10 @@ async function fetchMetrics() {
   }
 }
 
-import { getISOWeek, startOfISOWeek, formatISO } from 'date-fns';
-
+/**
+ * Aggregates and averages KPI data by week if range = 90 days,
+ * or returns raw timestamped series for shorter ranges.
+ */
 function prepareSeries(src: { value: number; timestamp: string }[]) {
   if (timeRange.value === 90) {
     const weekBuckets: Record<string, { sum: number; count: number; label: string }> = {};
@@ -258,12 +320,16 @@ function prepareSeries(src: { value: number; timestamp: string }[]) {
   };
 }
 
+/**
+ * Toggles visibility of a KPI line in the chart.
+ */
 function toggleMetric(type: string) {
   const idx = visibleMetrics.value.indexOf(type);
   if (idx === -1) visibleMetrics.value.push(type);
   else visibleMetrics.value.splice(idx, 1);
 }
 
+// Reactively update chart visibility when checkbox selection changes
 watch(visibleMetrics, () => {
   if (!chart) return;
   metricTypes.forEach((t, i) => {
@@ -272,6 +338,10 @@ watch(visibleMetrics, () => {
   chart!.update();
 });
 
+/**
+ * Sends request to reset and import CSV data to the backend.
+ * Reloads the machines list on completion.
+ */
 async function importCsv() {
   loading.value = true;
   try {
@@ -282,6 +352,7 @@ async function importCsv() {
   }
 }
 
+// Lifecycle hooks
 onMounted(fetchMachines);
 watch([selectedMachineId, timeRange], fetchMetrics);
 onBeforeUnmount(() => {
@@ -290,9 +361,22 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.dashboard { padding: 0 20px 20px 20px; }
-.controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-select, button { padding: 8px 12px; font-size: 1em; }
+.dashboard {
+  padding: 0 20px 20px 20px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+select,
+button {
+  padding: 8px 12px;
+  font-size: 1em;
+}
 
 .kpi-squares {
   display: grid;
@@ -343,8 +427,19 @@ select, button { padding: 8px 12px; font-size: 1em; }
   color: #1a2a44;
 }
 
-.chart-wrapper { position: relative; width: 100%; height: 400px; }
-canvas { background: #fff; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.1); width: 100%; height: 100%; }
+.chart-wrapper {
+  position: relative;
+  width: 100%;
+  height: 400px;
+}
+
+canvas {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+}
 
 h2 {
   margin-top: 0;
@@ -353,3 +448,4 @@ h2 {
   color: #333;
 }
 </style>
+

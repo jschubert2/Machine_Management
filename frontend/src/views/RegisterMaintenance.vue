@@ -1,7 +1,11 @@
 <template>
   <div class="register-maintenance">
     <h2>Register Maintenance</h2>
+
+    <!-- Maintenance form -->
     <form @submit.prevent="registerMaintenance" ref="regForm">
+      
+      <!-- Select machine to register maintenance for -->
       <div class="form-row">
         <label>Machine</label>
         <select v-model="selectedMachineId" required>
@@ -12,29 +16,40 @@
         </select>
       </div>
 
+      <!-- Display current user name (read-only) -->
       <div class="form-row">
         <label>Performed By</label>
         <input :value="fullName" type="text" readonly />
       </div>
 
+      <!-- Maintenance date -->
       <div class="form-row">
         <label>Date</label>
         <input v-model="date" type="date" required />
       </div>
 
+      <!-- Choose maintenance type -->
       <div class="form-row">
         <label>Maintenance Type</label>
         <div class="maintenance-type">
-          <label><input type="radio" value="performed" v-model="maintenanceType" required /> Performed</label>
-          <label><input type="radio" value="planned" v-model="maintenanceType" required /> Planned</label>
+          <label>
+            <input type="radio" value="performed" v-model="maintenanceType" required />
+            Performed
+          </label>
+          <label>
+            <input type="radio" value="planned" v-model="maintenanceType" required />
+            Planned
+          </label>
         </div>
       </div>
 
+      <!-- Optional notes -->
       <div class="form-row">
         <label>Notes</label>
         <textarea v-model="notes" rows="3" />
       </div>
 
+      <!-- Display success or error feedback -->
       <div v-if="successMessage" class="success-message">{{ successMessage }}</div>
       <div v-if="errorMessage" class="error-message">{{ errorMessage }}</div>
     </form>
@@ -48,19 +63,24 @@ import axios from 'axios';
 
 export default {
   name: 'RegisterMaintenance',
+
   data() {
     return {
-      machines: [],
-      selectedMachineId: '',
-      date: '',
-      maintenanceType: '',
-      notes: '',
-      fullName: 'Unknown User',
-      successMessage: '',
-      errorMessage: '',
+      machines: [],                // List of machines for dropdown
+      selectedMachineId: '',       // Selected machine ID
+      date: '',                    // Selected date
+      maintenanceType: '',         // 'performed' or 'planned'
+      notes: '',                   // User-entered notes
+      fullName: 'Unknown User',    // Populated from Keycloak token
+      successMessage: '',          // Success feedback message
+      errorMessage: '',            // Error feedback message
     };
   },
+
   methods: {
+    /**
+     * Fetches the list of available machines for selection.
+     */
     async fetchMachines() {
       try {
         const res = await axios.get('http://127.0.0.1:5000/machines', {
@@ -71,10 +91,16 @@ export default {
         this.errorMessage = 'Failed to load machines.';
       }
     },
+
+    /**
+     * Sends maintenance registration data to the backend.
+     * Includes user identity and maintenance type.
+     */
     async registerMaintenance() {
       this.successMessage = '';
       this.errorMessage = '';
 
+      // Retrieve current user's username from Keycloak token
       const token = this.$keycloak?.tokenParsed;
       const username = token?.preferred_username;
 
@@ -86,11 +112,13 @@ export default {
       try {
         await axios.post('http://127.0.0.1:5000/maintenance', {
           machine_id: this.selectedMachineId,
-          performed_by: username, // 👈 отправляем username
+          performed_by: username,  // 👈 Backend expects username, not full name
           date: this.date,
           notes: this.notes,
           planned: this.maintenanceType === 'planned',
         });
+
+        // Reset form fields and show success message
         this.successMessage = 'Maintenance registered successfully!';
         this.selectedMachineId = '';
         this.date = '';
@@ -101,10 +129,21 @@ export default {
         this.errorMessage = 'Failed to register maintenance.';
       }
     },
+
+    /**
+     * Programmatically submits the form when button is clicked.
+     * Useful because button is placed outside the <form> element.
+     */
     submitForm() {
       this.$refs.regForm.requestSubmit();
     },
   },
+
+  /**
+   * On mount:
+   * - Extract full name from Keycloak token
+   * - Fetch machine list
+   */
   async mounted() {
     const token = this.$keycloak?.tokenParsed;
     if (token) {
