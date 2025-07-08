@@ -1,12 +1,12 @@
 @echo off
 cd /d %~dp0
 
-echo Installing main project dependencies...
-call npm install
+@REM echo Installing main project dependencies...
+@REM call npm install
 
-echo.
-echo Installing specific dependencies: vuex, chartjs-adapter-date-fns, date-fns...
-call npm install vuex chartjs-adapter-date-fns date-fns
+@REM echo.
+@REM echo Installing specific dependencies: vuex, chartjs-adapter-date-fns, date-fns...
+@REM call npm install vuex chartjs-adapter-date-fns date-fns
 
 echo.
 echo Starting the development server...
