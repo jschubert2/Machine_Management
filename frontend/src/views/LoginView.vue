@@ -1,15 +1,17 @@
 <template>
-  <div class="login-wrapper">
-    <div class="login-left">
-      <div class="login-box">
-        <img :src="logo" alt="Logo" class="logo" />
-        <h1 class="title">Machine Management System</h1>
-        <p class="subtitle">Please log in with your organization account</p>
-        <button class="login-button" @click="login">Sign in with Keycloak</button>
+  <div class="login-page">
+    <div class="login-wrapper">
+      <div class="login-left">
+        <div class="login-box">
+          <img :src="logo" alt="Logo" class="logo" />
+          <h1 class="title">Machine Management System</h1>
+          <p class="subtitle">Please log in with your organization account</p>
+          <button class="login-button" @click="login">Sign in with Keycloak</button>
+        </div>
       </div>
-    </div>
-    <div class="login-right">
-      <img :src="sideImage" alt="Visual" class="side-image" />
+      <div class="login-right">
+        <img :src="sideImage" alt="Visual" class="side-image" />
+      </div>
     </div>
   </div>
 </template>
@@ -24,6 +26,18 @@ export default {
   data() {
     return { logo, sideImage }
   },
+  mounted() {
+    document.body.style.margin = '0'
+    document.body.style.overflow = 'hidden'
+    document.documentElement.style.height = '100%'
+    document.body.style.height = '100%'
+  },
+  beforeUnmount() {
+    document.body.style.margin = ''
+    document.body.style.overflow = ''
+    document.documentElement.style.height = ''
+    document.body.style.height = ''
+  },
   methods: {
     login() {
       keycloak.login()
@@ -33,18 +47,26 @@ export default {
 </script>
 
 <style scoped>
-.login-wrapper {
-  display: flex;
-  height: 100vh;
-  background: #f0f2f5;
+.login-page {
+  height: 100dvh;
+  width: 100vw;
   overflow: hidden;
 }
 
-.login-left, .login-right {
+.login-wrapper {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: #f0f2f5;
+}
+
+.login-left,
+.login-right {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .login-box {
